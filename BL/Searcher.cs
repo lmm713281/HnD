@@ -19,26 +19,18 @@
 */
 using System;
 using System.Collections;
-using System.Data;
 using System.Text;
-using System.Globalization;
-
-using System.Xml;
 
 using SD.LLBLGen.Pro.ORMSupportClasses;
-using SD.HnD.DAL;
 using SD.HnD.DAL.TypedListClasses;
-using SD.HnD.DAL.FactoryClasses;
-using SD.HnD.DAL.CollectionClasses;
-using SD.HnD.DAL.EntityClasses;
 using SD.HnD.DAL.HelperClasses;
-using SD.HnD.DAL.DaoClasses;
 using SD.LLBLGen.Pro.QuerySpec;
-using SD.LLBLGen.Pro.QuerySpec.SelfServicing;
+using SD.LLBLGen.Pro.QuerySpec.Adapter;
 
 using SD.HnD.Utility;
 using System.Collections.Generic;
-using System.Data.Common;
+using SD.HnD.DAL.DatabaseSpecific;
+using SD.HnD.DAL.FactoryClasses;
 
 namespace SD.HnD.BL
 {
@@ -61,8 +53,8 @@ namespace SD.HnD.BL
 		/// <returns>
 		/// TypedList filled with threads matching the query.
 		/// </returns>
-		public static SearchResultTypedList DoSearch(string searchString, List<int> forumIDs, SearchResultsOrderSetting orderFirstElement,
-			SearchResultsOrderSetting orderSecondElement, List<int> forumsWithThreadsFromOthers, int userID, SearchTarget targetToSearch)
+		public static SearchResultTypedList DoSearch(string searchString, List<int> forumIDs, SearchResultsOrderSetting orderFirstElement, SearchResultsOrderSetting orderSecondElement, 
+													 List<int> forumsWithThreadsFromOthers, int userID, SearchTarget targetToSearch)
 		{
 			// the search utilizes full text search. It performs a CONTAINS upon the MessageText field of the Message entity. 
 			string searchTerms = PrepareSearchTerms(searchString);
@@ -74,53 +66,51 @@ namespace SD.HnD.BL
 				searchMessageText = true;
 			}
 
-			PredicateExpression searchTermFilter = new PredicateExpression();
+			var qf = new QueryFactory();
+			var searchTermFilter = new PredicateExpression();
 			if(searchMessageText)
 			{
 				// Message contents filter
-				searchTermFilter.Add(new FieldCompareSetPredicate(ThreadFields.ThreadID, MessageFields.ThreadID,
-									SetOperator.In, new FieldFullTextSearchPredicate(MessageFields.MessageText, FullTextSearchOperator.Contains, searchTerms)));
+				searchTermFilter.Add(ThreadFields.ThreadID.In(qf.Create()
+																.Select(MessageFields.ThreadID)
+																.Where(new FieldFullTextSearchPredicate(MessageFields.MessageText, null, FullTextSearchOperator.Contains, searchTerms))));
 			}
 			if(searchSubject)
 			{
 				// Thread subject filter
 				if(searchMessageText)
 				{
-					searchTermFilter.AddWithOr(new FieldFullTextSearchPredicate(ThreadFields.Subject, FullTextSearchOperator.Contains, searchTerms));
+					searchTermFilter.AddWithOr(new FieldFullTextSearchPredicate(ThreadFields.Subject, null, FullTextSearchOperator.Contains, searchTerms));
 				}
 				else
 				{
-					searchTermFilter.Add(new FieldFullTextSearchPredicate(ThreadFields.Subject, FullTextSearchOperator.Contains, searchTerms));
+					searchTermFilter.Add(new FieldFullTextSearchPredicate(ThreadFields.Subject, null, FullTextSearchOperator.Contains, searchTerms));
 				}
 			}
 			IPredicateExpression mainFilter = searchTermFilter
 													.And(ForumFields.ForumID == forumIDs)
 													.And(ThreadGuiHelper.CreateThreadFilter(forumsWithThreadsFromOthers, userID));
 
-			ISortExpression sorter = new SortExpression();
-			// add first element
-			sorter.Add(CreateSearchSortClause(orderFirstElement));
+			ISortExpression sorter = new SortExpression(CreateSearchSortClause(orderFirstElement));
 			if(orderSecondElement != orderFirstElement)
 			{
 				sorter.Add(CreateSearchSortClause(orderSecondElement));
 			}
 
-			SearchResultTypedList results = new SearchResultTypedList(false);
-
-			try
+			var results = new SearchResultTypedList(false);
+			using(var adapter = new DataAccessAdapter())
 			{
-				// get the data from the db. 
-				results.Fill(500, sorter, false, mainFilter);
+				try
+				{
+					adapter.FetchTypedList(results, mainFilter, 500, sorter, false);
+				}
+				catch
+				{
+					// probably an error with the search words / user error. Swallow for now, which will result in an empty resultset.
+				}
 			}
-			catch
-			{
-				// probably an error with the search words / user error. Swallow for now, which will result in an empty resultset.
-			}
-
 			return results;
 		}
-
-
 
 		/// <summary>
 		/// Prepares the search terms.
@@ -129,11 +119,14 @@ namespace SD.HnD.BL
 		/// <returns>search terms string, prepare for CONTAINS usage.</returns>
 		private static string PrepareSearchTerms(string searchTerms)
 		{
-			ArrayList termsToProcess = new ArrayList();
+			var termsToProcess = new List<string>();
 			string[] terms = searchTerms.Split(' ');
+			
 			// now traverse from front to back. Collide any sequence of terms where the start term starts with a '"' and the end term ends with a '"'.
+			StringBuilder tmpTerm = new StringBuilder(256);
 			for(int i=0;i<terms.Length;i++)
 			{
+				tmpTerm.Clear();
 				string term = terms[i];
 				if(term.Length<=0)
 				{
@@ -145,7 +138,6 @@ namespace SD.HnD.BL
 				{
 					// start of sequence, find end of sequence.
 					bool endOfSequenceFound = false;
-					StringBuilder tmpTerm = new StringBuilder(256);
 					int endIndexOfSequence = i;
 					for (int j = i; j < terms.Length; j++)
 					{
@@ -193,7 +185,7 @@ namespace SD.HnD.BL
 			bool operatorSeenLastIteration = false;
 			for (int i = 0; i < termsToProcess.Count; i++)
 			{
-				string term = (string)termsToProcess[i];
+				string term = termsToProcess[i];
 				string termLowerCase = term.ToLowerInvariant();
 				// check if this is an operator.
 				switch(termLowerCase)
@@ -204,7 +196,9 @@ namespace SD.HnD.BL
 						if(i > 0)
 						{
 							operatorSeenLastIteration = true;
-							toReturn.AppendFormat(" {0} ", term);
+							toReturn.Append(" ");
+							toReturn.Append(term);
+							toReturn.Append(" ");
 						}
 						continue;
 					case "not":
@@ -235,18 +229,22 @@ namespace SD.HnD.BL
 				if(term.StartsWith("*") || term.EndsWith("*"))
 				{
 					// wildcard without proper quotes
-					toReturn.AppendFormat(" \"{0}\" ", term);
+					toReturn.Append(" \"");
+					toReturn.Append(term);
+					toReturn.Append("\" ");
 				}
 				else
 				{
-					toReturn.AppendFormat(" {0} ", term);
+					toReturn.Append(" ");
+					toReturn.Append(term);
+					toReturn.Append(" ");
 				}
 			}
 
 			return toReturn.ToString();
 		}
 
-
+		
 		/// <summary>
 		/// Creates the search sort clause for the element passed in
 		/// </summary>

@@ -1,7 +1,7 @@
 /*
 	This file is part of HnD.
 	HnD is (c) 2002-2007 Solutions Design.
-    http://www.llblgen.com
+	http://www.llblgen.com
 	http://www.sd.nl
 
 	HnD is free software; you can redistribute it and/or modify
@@ -19,20 +19,17 @@
 */
 using System;
 using System.Data;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 
 using SD.LLBLGen.Pro.ORMSupportClasses;
 using SD.LLBLGen.Pro.QuerySpec;
-using SD.LLBLGen.Pro.QuerySpec.SelfServicing;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.DAL.TypedListClasses;
 using SD.HnD.DAL.FactoryClasses;
 using SD.HnD.DAL;
+using SD.HnD.DAL.DatabaseSpecific;
 using SD.HnD.DAL.HelperClasses;
 using SD.HnD.DAL.EntityClasses;
-using SD.HnD.DAL.DaoClasses;
+using SD.LLBLGen.Pro.QuerySpec.Adapter;
 
 namespace SD.HnD.BL
 {
@@ -50,9 +47,13 @@ namespace SD.HnD.BL
 		/// <returns>typed list with data requested</returns>
 		public static ForumMessagesTypedList GetLastPostedMessagesInForum(int amount, int forumID)
 		{
-			ForumMessagesTypedList forumMessages = new ForumMessagesTypedList();
-			forumMessages.Fill(amount, new SortExpression(MessageFields.PostingDate.Ascending()), false,
-							   (ForumFields.ForumID == forumID).And(ForumFields.HasRSSFeed == true));
+			var forumMessages = new ForumMessagesTypedList();
+			using(var adapter = new DataAccessAdapter())
+			{
+				adapter.FetchTypedList(forumMessages, (ForumFields.ForumID == forumID).And(ForumFields.HasRSSFeed == true), amount, 
+									   new SortExpression(MessageFields.PostingDate.Ascending()), false);
+			}
+
 			return forumMessages;
 		}
 
@@ -70,8 +71,8 @@ namespace SD.HnD.BL
 		/// Otherwise only the threads started by the user calling the method are returned.</param>
 		/// <param name="userID">The userid of the user calling the method.</param>
 		/// <returns>DataView with all the threads</returns>
-		public static DataView GetAllThreadsInForumAsDataView(int forumID, ThreadListInterval limiter, short minNumberOfThreadsToFetch, 
-				short minNumberOfNonStickyVisibleThreads, bool canViewNormalThreadsStartedByOthers, int userID)
+		public static DataView GetAllThreadsInForumAsDataView(int forumID, ThreadListInterval limiter, short minNumberOfThreadsToFetch, short minNumberOfNonStickyVisibleThreads, 
+															  bool canViewNormalThreadsStartedByOthers, int userID)
 		{
 			DateTime limiterDate;
 
@@ -113,38 +114,37 @@ namespace SD.HnD.BL
 				q.AndWhere((ThreadFields.StartedByUserID == userID).Or(ThreadFields.IsSticky == true));
 			}
 			q.OrderBy(ThreadFields.IsSticky.Descending(), ThreadFields.IsClosed.Ascending(), ThreadFields.ThreadLastPostingDate.Descending());
-			var dao = new TypedListDAO();
-			var threads = dao.FetchAsDataTable(q);
-
-			// count # non-sticky threads. If it's below a given minimum, refetch everything, but now don't fetch on date filtered but at least the
-			// set minimum. Do this ONLY if the user can view other user's threads. If that's NOT the case, don't refetch anything.
-			DataView stickyThreads = new DataView(threads, ThreadFieldIndex.IsSticky.ToString() + "=false", "", DataViewRowState.CurrentRows);
-			if((stickyThreads.Count < minNumberOfNonStickyVisibleThreads) && canViewNormalThreadsStartedByOthers)
+			using(var adapter = new DataAccessAdapter())
 			{
-				// not enough threads available, fetch again, 
-				// first fetch the sticky threads. 
-				q = qf.Create();
-				q.Select(ThreadGuiHelper.BuildQueryProjectionForAllThreadsWithStats(qf));
-				q.From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf));
-				q.Where((ThreadFields.IsSticky == true).And(ThreadFields.ForumID == forumID));
-				q.OrderBy(ThreadFields.ThreadLastPostingDate.Descending());
-				threads = dao.FetchAsDataTable(q);
+				var threads = adapter.FetchAsDataTable(q);
 
-				// then fetch the rest. Fetch it into the same datatable object to append the rows to the already fetched sticky threads (if any)
-				q = qf.Create();
-				q.Select(ThreadGuiHelper.BuildQueryProjectionForAllThreadsWithStats(qf));
-				q.From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf));
-				q.Where((ThreadFields.IsSticky == false).And(ThreadFields.ForumID == forumID));
-				q.Limit(minNumberOfThreadsToFetch);
-				q.OrderBy(ThreadFields.ThreadLastPostingDate.Descending());
-				dao.FetchAsDataTable(q, threads);
+				// count # non-sticky threads. If it's below a given minimum, refetch everything, but now don't fetch on date filtered but at least the
+				// set minimum. Do this ONLY if the user can view other user's threads. If that's NOT the case, don't refetch anything.
+				DataView stickyThreads = new DataView(threads, ThreadFieldIndex.IsSticky + "=false", "", DataViewRowState.CurrentRows);
+				if((stickyThreads.Count < minNumberOfNonStickyVisibleThreads) && canViewNormalThreadsStartedByOthers)
+				{
+					// not enough threads available, fetch again, 
+					// first fetch the sticky threads. 
+					q = qf.Create();
+					q.Select(ThreadGuiHelper.BuildQueryProjectionForAllThreadsWithStats(qf));
+					q.From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf));
+					q.Where((ThreadFields.IsSticky == true).And(ThreadFields.ForumID == forumID));
+					q.OrderBy(ThreadFields.ThreadLastPostingDate.Descending());
+					threads = adapter.FetchAsDataTable(q);
 
-				// sort closed threads to the bottom. Do this in-memory as it's a sort operation after projection. Doing it on the server would mean
-				// a sort operation before projection.
-				return new DataView(threads, string.Empty, ThreadFieldIndex.IsClosed.ToString() + " ASC", DataViewRowState.CurrentRows);
-			}
-			else
-			{
+					// then fetch the rest. Fetch it into the same datatable object to append the rows to the already fetched sticky threads (if any)
+					q = qf.Create();
+					q.Select(ThreadGuiHelper.BuildQueryProjectionForAllThreadsWithStats(qf));
+					q.From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf));
+					q.Where((ThreadFields.IsSticky == false).And(ThreadFields.ForumID == forumID));
+					q.Limit(minNumberOfThreadsToFetch);
+					q.OrderBy(ThreadFields.ThreadLastPostingDate.Descending());
+					adapter.FetchAsDataTable(q, threads);
+
+					// sort closed threads to the bottom. Do this in-memory as it's a sort operation after projection. Doing it on the server would mean
+					// a sort operation before projection.
+					return new DataView(threads, string.Empty, ThreadFieldIndex.IsClosed.ToString() + " ASC", DataViewRowState.CurrentRows);
+				}
 				return threads.DefaultView;
 			}
 		}
@@ -156,13 +156,16 @@ namespace SD.HnD.BL
 		/// <returns>Filled typedlist with all forum names / forumIDs and their containing section's name, sorted on Sectionname, and then forumname</returns>
 		public static ForumsWithSectionNameTypedList GetAllForumsWithSectionNames()
 		{
-			ForumsWithSectionNameTypedList toReturn = new ForumsWithSectionNameTypedList();
-			SortExpression sorter = new SortExpression(SectionFields.OrderNo.Ascending());
+			var toReturn = new ForumsWithSectionNameTypedList();
+			var sorter = new SortExpression(SectionFields.OrderNo.Ascending());
 			sorter.Add(SectionFields.SectionName.Ascending());
 			sorter.Add(ForumFields.OrderNo.Ascending());
 			sorter.Add(ForumFields.ForumName.Ascending());
-			toReturn.Fill(0, sorter);
-			return toReturn;
+			using(var adapter = new DataAccessAdapter())
+			{
+				adapter.FetchTypedList(toReturn, null, 0, sorter, false);
+				return toReturn;
+			}
 		}
 
 
@@ -171,14 +174,15 @@ namespace SD.HnD.BL
 		/// </summary>
 		/// <param name="sectionID">The section ID from which forums should be retrieved</param>
 		/// <returns>Entity collection with entities for all forums in this section sorted alphabitacally</returns>
-		public static ForumCollection GetAllForumsInSection(int sectionID)
+		public static EntityCollection<ForumEntity> GetAllForumsInSection(int sectionID)
 		{
 			var q = new QueryFactory().Forum
-						.Where(ForumFields.SectionID == sectionID)
-						.OrderBy(ForumFields.OrderNo.Ascending(), ForumFields.ForumName.Ascending());
-			var toReturn = new ForumCollection();
-			toReturn.GetMulti(q);
-			return toReturn;
+									  .Where(ForumFields.SectionID == sectionID)
+									  .OrderBy(ForumFields.OrderNo.Ascending(), ForumFields.ForumName.Ascending());
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(q, new EntityCollection<ForumEntity>());
+			}
 		}
 
 
@@ -188,17 +192,17 @@ namespace SD.HnD.BL
 		/// </summary>
 		/// <param name="availableSections">SectionCollection with all available sections</param>
 		/// <param name="accessableForums">List of accessable forums IDs.</param>
-		/// <param name="forumsWithOnlyOwnThreads">The forums for which the calling user can view other users' threads. Can be null</param>
+		/// <param name="forumsWithThreadsFromOthers"></param>
 		/// <param name="userID">The userid of the calling user.</param>
 		/// <returns>
 		/// Dictionary with per key (sectionID) a dataview with forum information of all the forums in that section.
 		/// </returns>
 		/// <remarks>Uses dataviews because a dynamic list is executed to retrieve the information for the forums, which include aggregate info about
 		/// # of posts.</remarks>
-        public static Dictionary<int, DataView> GetAllAvailableForumsDataViews(SectionCollection availableSections, List<int> accessableForums,
-				List<int> forumsWithThreadsFromOthers, int userID)
+		public static Dictionary<int, DataView> GetAllAvailableForumsDataViews(EntityCollection<SectionEntity> availableSections, List<int> accessableForums, 
+																			   List<int> forumsWithThreadsFromOthers, int userID)
         {
-			Dictionary<int, DataView> toReturn = new Dictionary<int, DataView>();
+			var toReturn = new Dictionary<int, DataView>();
 
             // return an empty list, if the user does not have a valid list of forums to access
             if (accessableForums == null || accessableForums.Count <= 0)
@@ -249,19 +253,19 @@ namespace SD.HnD.BL
 						.Where(ForumFields.ForumID == accessableForums)
 						.OrderBy(ForumFields.OrderNo.Ascending(), ForumFields.ForumName.Ascending());
 
-			var results = new TypedListDAO().FetchAsDataTable(q);
+			DataTable results;
+			using(var adapter = new DataAccessAdapter())
+			{
+				results = adapter.FetchAsDataTable(q);
+			}
 
 			// Now per section create a new DataView in memory using in-memory filtering on the DataTable. 
             foreach(SectionEntity section in availableSections)
             {
                 // Create view for current section and filter out rows we don't want. Do this with in-memory filtering of the dataview, so we don't
 				// have to execute multiple queries. 
-                DataView forumsInSection = new DataView(results, "SectionID=" + section.SectionID, string.Empty, DataViewRowState.CurrentRows);
-                // add to sorted list with SectionID as key
-                toReturn.Add(section.SectionID, forumsInSection);
+                toReturn.Add(section.SectionID, new DataView(results, "SectionID=" + section.SectionID, string.Empty, DataViewRowState.CurrentRows));
             }
-
-            // return the dictionary
             return toReturn;
         }
 
@@ -273,12 +277,11 @@ namespace SD.HnD.BL
 		/// <returns>forum entity with the data requested, or null if not found</returns>
 		public static ForumEntity GetForum(int forumID)
 		{
-			ForumEntity toReturn = new ForumEntity(forumID);
-			if(toReturn.Fields.State!=EntityState.Fetched)
+			using(var adapter = new DataAccessAdapter())
 			{
-				return null;
+				var forum = new ForumEntity(forumID);
+				return adapter.FetchEntity(forum) ? forum : null;
 			}
-			return toReturn;
 		}
 	}
 }

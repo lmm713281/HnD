@@ -20,16 +20,14 @@
 using System;
 using System.Data;
 using System.Text;
-using System.Collections;
 
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.DAL.HelperClasses;
 using SD.HnD.DAL;
 using SD.HnD.DAL.EntityClasses;
 using SD.LLBLGen.Pro.ORMSupportClasses;
-using SD.HnD.DAL.DaoClasses;
 using System.Collections.Generic;
-using SD.LLBLGen.Pro.QuerySpec.SelfServicing;
+using SD.HnD.DAL.DatabaseSpecific;
+using SD.LLBLGen.Pro.QuerySpec.Adapter;
 using SD.LLBLGen.Pro.QuerySpec;
 using SD.HnD.DAL.FactoryClasses;
 
@@ -44,11 +42,12 @@ namespace SD.HnD.BL
 		/// Gets all role objects.
 		/// </summary>
 		/// <returns></returns>
-		public static RoleCollection GetAllRoles()
+		public static EntityCollection<RoleEntity> GetAllRoles()
 		{
-			RoleCollection toReturn = new RoleCollection();
-			toReturn.GetMulti(null, 0, new SortExpression(RoleFields.RoleDescription.Ascending()));
-			return toReturn;
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(new QueryFactory().Role.OrderBy(RoleFields.RoleDescription.Ascending()), new EntityCollection<RoleEntity>());
+			}
 		}
 
 
@@ -56,11 +55,12 @@ namespace SD.HnD.BL
 		/// Gets all audit actions.
 		/// </summary>
 		/// <returns></returns>
-		public static AuditActionCollection GetAllAuditActions()
+		public static EntityCollection<AuditActionEntity> GetAllAuditActions()
 		{
-			AuditActionCollection toReturn = new AuditActionCollection();
-			toReturn.GetMulti(null, 0, new SortExpression(AuditActionFields.AuditActionDescription.Ascending()));
-			return toReturn;
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(new QueryFactory().AuditAction.OrderBy(AuditActionFields.AuditActionDescription.Ascending()), new EntityCollection<AuditActionEntity>());
+			}
 		}
 
 
@@ -69,11 +69,12 @@ namespace SD.HnD.BL
 		/// </summary>
 		/// <param name="roleID">Role ID.</param>
 		/// <returns></returns>
-		public static RoleAuditActionCollection GetAllAuditActionsForRole(int roleID)
+		public static EntityCollection<RoleAuditActionEntity> GetAllAuditActionsForRole(int roleID)
 		{
-			RoleAuditActionCollection toReturn = new RoleAuditActionCollection();
-			toReturn.GetMulti((RoleAuditActionFields.RoleID == roleID));
-			return toReturn;
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(new QueryFactory().RoleAuditAction.Where(RoleAuditActionFields.RoleID == roleID), new EntityCollection<RoleAuditActionEntity>());
+			}
 		}
 
 
@@ -82,19 +83,19 @@ namespace SD.HnD.BL
 		/// </summary>
 		/// <param name="userID">User ID.</param>
 		/// <returns>All audit data objects (polymorphic)</returns>
-		public static AuditDataCoreCollection GetAllAuditsForUser(int userID)
+		public static EntityCollection<AuditDataCoreEntity> GetAllAuditsForUser(int userID)
 		{
 			var qf = new QueryFactory();
 			var q = qf.AuditDataCore
-						.Where(AuditDataCoreFields.UserID==userID)
-						.OrderBy(AuditDataCoreFields.AuditedOn.Descending())
-						.Limit(50)
-						.WithPath(AuditDataMessageRelatedEntity.PrefetchPathMessage.WithSubPath(MessageEntity.PrefetchPathThread),
-								  AuditDataThreadRelatedEntity.PrefetchPathThread);
-			
-			AuditDataCoreCollection toReturn = new AuditDataCoreCollection();
-			toReturn.GetMulti(q);
-			return toReturn;
+					  .Where(AuditDataCoreFields.UserID==userID)
+					  .OrderBy(AuditDataCoreFields.AuditedOn.Descending())
+					  .Limit(50)
+					  .WithPath(AuditDataMessageRelatedEntity.PrefetchPathMessage.WithSubPath(MessageEntity.PrefetchPathThread),
+							    AuditDataThreadRelatedEntity.PrefetchPathThread);
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(q, new EntityCollection<AuditDataCoreEntity>());
+			}
 		}
 
 
@@ -107,18 +108,20 @@ namespace SD.HnD.BL
 		/// <returns>
 		/// the collection of ipban entities requested
 		/// </returns>
-		public static IPBanCollection GetAllIPBans(int pageNo, int pageSize, bool prefetchUser)
+		public static EntityCollection<IPBanEntity> GetAllIPBans(int pageNo, int pageSize, bool prefetchUser)
 		{
-			IPBanCollection toReturn = new IPBanCollection();
-			PrefetchPath path = null;
+			var qf = new QueryFactory();
+			var q = qf.IPBan
+						.OrderBy(IPBanFields.Range.Ascending())
+						.Page(pageNo, pageSize);
 			if(prefetchUser)
 			{
-				// build the Prefetch path to fetch the user as well
-				path = new PrefetchPath((int)EntityType.IPBanEntity);
-				path.Add(IPBanEntity.PrefetchPathSetByUser);
+				q.WithPath(IPBanEntity.PrefetchPathSetByUser);
 			}
-			toReturn.GetMulti(null, 0, new SortExpression(IPBanFields.Range.Ascending()), null, path, pageNo, pageSize);
-			return toReturn;
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(q, new EntityCollection<IPBanEntity>());
+			}
 		}
 
 
@@ -128,8 +131,10 @@ namespace SD.HnD.BL
 		/// <returns>the # of IPBans stored in the database.</returns>
 		public static int GetTotalIPBanCount()
 		{
-			IPBanCollection toReturn = new IPBanCollection();
-			return toReturn.GetDbCount();
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchScalar<int>(new QueryFactory().Create().Select(Functions.CountRow()));
+			}
 		}
 
 
@@ -158,8 +163,12 @@ namespace SD.HnD.BL
 									.ToScalar()
 									.As("AmountUsersInRole"))
 						.OrderBy(RoleFields.RoleDescription.Ascending());
-			var dao = new TypedListDAO();
-			var results = dao.FetchAsDataTable(q);
+			
+			DataTable results;
+			using(var adapter = new DataAccessAdapter())
+			{
+				results = adapter.FetchAsDataTable(q);
+			}
 
 			// we now fetch the system data which contains the two role id's we've to check with in the results to return.
 			SystemDataEntity systemData = SystemGuiHelper.GetSystemSettings();
@@ -185,12 +194,11 @@ namespace SD.HnD.BL
 		/// <returns>Entity with the role data or null if not found</returns>
 		public static RoleEntity GetRole(int roleID)
 		{
-			RoleEntity toReturn = new RoleEntity( roleID );
-			if(toReturn.IsNew)
+			using(var adapter = new DataAccessAdapter())
 			{
-				return null;
+				var role = new RoleEntity(roleID);
+				return adapter.FetchEntity(role) ? role : null;
 			}
-			return toReturn;
 		}
 
 		
@@ -199,11 +207,12 @@ namespace SD.HnD.BL
 		/// </summary>
 		/// <param name="roleID">The role which system action rights should be retrieved.</param>
 		/// <returns>filled collection with entities of type RoleSystemActionRightEntity</returns>
-		public static RoleSystemActionRightCollection GetSystemActionRightRolesForRole(int roleID)
+		public static EntityCollection<RoleSystemActionRightEntity> GetSystemActionRightRolesForRole(int roleID)
 		{
-			RoleSystemActionRightCollection toReturn = new RoleSystemActionRightCollection();
-			toReturn.GetMulti((RoleSystemActionRightFields.RoleID == roleID));
-			return toReturn;
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(new QueryFactory().RoleSystemActionRight.Where(RoleSystemActionRightFields.RoleID == roleID), new EntityCollection<RoleSystemActionRightEntity>());
+			}
 		}
 
 
@@ -214,11 +223,14 @@ namespace SD.HnD.BL
 		/// <param name="forumID">The forum ID.</param>
 		/// <returns>filled entity collection
 		/// </returns>
-		public static ForumRoleForumActionRightCollection GetForumActionRightRolesFoForumRole(int roleID, int forumID)
+		public static EntityCollection<ForumRoleForumActionRightEntity> GetForumActionRightRolesFoForumRole(int roleID, int forumID)
 		{
-			ForumRoleForumActionRightCollection toReturn = new ForumRoleForumActionRightCollection();
-			toReturn.GetMulti((ForumRoleForumActionRightFields.RoleID == roleID).And(ForumRoleForumActionRightFields.ForumID==forumID));
-			return toReturn;
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(new QueryFactory().ForumRoleForumActionRight
+															.Where((ForumRoleForumActionRightFields.RoleID == roleID).And(ForumRoleForumActionRightFields.ForumID == forumID)),
+										  new EntityCollection<ForumRoleForumActionRightEntity>());
+			}
 		}
 
 
@@ -226,11 +238,13 @@ namespace SD.HnD.BL
 		/// Retrieves all ActionRight entities which are applyable to a forum.
 		/// </summary>
 		/// <returns>entitycollection with all the action rights requested</returns>
-		public static ActionRightCollection GetAllActionRightsApplybleToAForum()
+		public static EntityCollection<ActionRightEntity> GetAllActionRightsApplybleToAForum()
 		{
-			ActionRightCollection toReturn = new ActionRightCollection();
-			toReturn.GetMulti((ActionRightFields.AppliesToForum == true), 0, new SortExpression( ActionRightFields.ActionRightID.Ascending()) );
-			return toReturn;
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(new QueryFactory().ActionRight.Where(ActionRightFields.AppliesToForum == true).OrderBy(ActionRightFields.ActionRightID.Ascending()), 
+										  new EntityCollection<ActionRightEntity>());
+			}
 		}
 
 
@@ -238,11 +252,15 @@ namespace SD.HnD.BL
 		/// Retrieves all action rights which are system action rights and which aren't applyable to a forum
 		/// </summary>
 		/// <returns>entitycollection with all the system action rights</returns>
-		public static ActionRightCollection GetAllSystemActionRights()
+		public static EntityCollection<ActionRightEntity> GetAllSystemActionRights()
 		{
-			ActionRightCollection toReturn = new ActionRightCollection();
-			toReturn.GetMulti((ActionRightFields.AppliesToSystem == true), 0, new SortExpression(ActionRightFields.ActionRightID | SortOperator.Ascending));
-			return toReturn;
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(new QueryFactory().ActionRight
+																.Where(ActionRightFields.AppliesToSystem == true)
+																.OrderBy(ActionRightFields.ActionRightID | SortOperator.Ascending),
+										  new EntityCollection<ActionRightEntity>());
+			}
 		}
 		
 
@@ -250,29 +268,23 @@ namespace SD.HnD.BL
 		/// Gets the system action rights for user.
 		/// </summary>
 		/// <param name="userID">The user ID.</param>
-		/// <param name="actionRights">The action rights to be returned.</param>
 		/// <returns>filled collection</returns>
-		public static ActionRightCollection GetSystemActionRightsForUser(int userID)
+		public static EntityCollection<ActionRightEntity> GetSystemActionRightsForUser(int userID)
 		{
-			ActionRightCollection actionRights = new ActionRightCollection();
-
+			var qf = new QueryFactory();
 			// the subquery in the filter requires joins as the filter's subquery has to filter on fields in related entities:
 			// WHERE ActionRightID IN (SELECT ActionRightID FROM RoleSystemActionRight INNER JOIN Role ... INNER JOIN RoleUser ... WHERE RoleUser.UserID=userID)
-			RelationCollection relations = new RelationCollection();
-			relations.Add(RoleSystemActionRightEntity.Relations.RoleEntityUsingRoleID);
-			relations.Add(RoleEntity.Relations.RoleUserEntityUsingRoleID);
-
-			PredicateExpression filter = new PredicateExpression();
-			// retrieve system action rights only.
-			filter.Add(ActionRightFields.AppliesToSystem == true);
-			filter.Add(new FieldCompareSetPredicate(
-						ActionRightFields.ActionRightID,
-						RoleSystemActionRightFields.ActionRightID,
-						SetOperator.In,
-						(RoleUserFields.UserID == userID), relations));
-
-			actionRights.GetMulti(filter);
-			return actionRights;
+			var q = qf.ActionRight
+					  .Where(ActionRightFields.ActionRightID.In(qf.Create()
+																  .Select(RoleSystemActionRightFields.ActionRightID)
+																  .From(qf.RoleSystemActionRight.InnerJoin(qf.Role).On(RoleSystemActionRightFields.RoleID.Equal(RoleFields.RoleID))
+																		  .InnerJoin(qf.RoleUser).On(RoleFields.RoleID.Equal(RoleUserFields.RoleID)))
+																  .Where(RoleUserFields.UserID.Equal(userID)))
+											  .And(ActionRightFields.AppliesToSystem.Equal(true)));
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(q, new EntityCollection<ActionRightEntity>());
+			}
 		}
 
 
@@ -281,22 +293,21 @@ namespace SD.HnD.BL
 		/// </summary>
 		/// <param name="userID">The user ID.</param>
 		/// <returns>fetched collection</returns>
-		public static ForumRoleForumActionRightCollection GetForumsActionRightsForUser(int userID)
+		public static EntityCollection<ForumRoleForumActionRightEntity> GetForumsActionRightsForUser(int userID)
 		{
-			ForumRoleForumActionRightCollection forumRoleActionRights = new ForumRoleForumActionRightCollection();
-
+			var qf = new QueryFactory();
 			// the subquery in the filter requires joins as the filter's subquery has to filter on fields in related entities:
 			// WHERE RoleID IN (SELECT RoleID FROM Role INNER JOIN RoleUser ... WHERE RoleUser.UserID=userID)
-			RelationCollection relations = new RelationCollection();
-			relations.Add(RoleEntity.Relations.RoleUserEntityUsingRoleID);
-
-			PredicateExpression filter = new PredicateExpression();
-			filter.Add(new FieldCompareSetPredicate(ForumRoleForumActionRightFields.RoleID,
-						RoleFields.RoleID, SetOperator.In, (RoleUserFields.UserID == userID), relations));
-
-			forumRoleActionRights.GetMulti(filter);
-			return forumRoleActionRights;
-		}
+			var q = qf.ForumRoleForumActionRight
+					  .Where(ForumRoleForumActionRightFields.RoleID.In(qf.Create()
+																		 .Select(RoleFields.RoleID)
+																		 .From(qf.Role.InnerJoin(qf.RoleUser).On(RoleFields.RoleID.Equal(RoleUserFields.RoleID)))
+																		 .Where(RoleUserFields.UserID.Equal(userID))));
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(q, new EntityCollection<ForumRoleForumActionRightEntity>());
+			}
+}
 
 
 		/// <summary>
@@ -304,21 +315,20 @@ namespace SD.HnD.BL
 		/// </summary>
 		/// <param name="userID">The user ID.</param>
 		/// <returns>fetched collection</returns>
-		public static AuditActionCollection GetAuditActionsForUser(int userID)
+		public static EntityCollection<AuditActionEntity> GetAuditActionsForUser(int userID)
 		{
 			var qf = new QueryFactory();
 			var q = qf.AuditAction
-						.Where(AuditActionFields.AuditActionID
-											.In(qf.Create()
-														.Select(RoleAuditActionFields.AuditActionID)
-														.From(qf.RoleAuditAction
-																.InnerJoin(qf.Role).On(RoleAuditActionFields.RoleID==RoleFields.RoleID)
-																.InnerJoin(qf.RoleUser).On(RoleFields.RoleID==RoleUserFields.RoleID))
-														.Where(RoleUserFields.UserID==userID)));
-
-			AuditActionCollection auditActions = new AuditActionCollection();
-			auditActions.GetMulti(q);
-			return auditActions;
+					  .Where(AuditActionFields.AuditActionID.In(qf.Create()
+																  .Select(RoleAuditActionFields.AuditActionID)
+																  .From(qf.RoleAuditAction
+																		  .InnerJoin(qf.Role).On(RoleAuditActionFields.RoleID == RoleFields.RoleID)
+																		  .InnerJoin(qf.RoleUser).On(RoleFields.RoleID == RoleUserFields.RoleID))
+																  .Where(RoleUserFields.UserID == userID)));
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(q, new EntityCollection<AuditActionEntity>());
+			}
 		}
 
 
@@ -350,14 +360,12 @@ namespace SD.HnD.BL
 					ipTemp.Append(".");
 				}
 				ipTemp.Append(ipAddressSegments[i]);
-
-				allCachedIPBans.TryGetValue(8*(i+1), out rangeBans);
+				rangeBans = allCachedIPBans.GetValue(8*(i+1));
 				if(rangeBans==null)
 				{
 					// no range bans with this range, continue
 					continue;
 				}
-
 				if(rangeBans.TryGetValue(ipTemp.ToString(), out toReturn))
 				{
 					// we have a match!

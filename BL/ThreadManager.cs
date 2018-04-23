@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Web;
 using System.Net.Mail;
+using SD.HnD.DAL.DatabaseSpecific;
 using SD.LLBLGen.Pro.QuerySpec;
 using SD.LLBLGen.Pro.QuerySpec.SelfServicing;
 using SD.HnD.DAL.FactoryClasses;
@@ -342,25 +343,23 @@ namespace SD.HnD.BL
 		{
             // trying to delete the entity directly from the database without first loading it.
             // for that we use an entity collection and use the DeleteMulti method with a filter on the PK.
-			PredicateExpression threadFilter = new PredicateExpression(ThreadFields.ThreadID == threadID);
-			Transaction trans = new Transaction(IsolationLevel.ReadCommitted, "DeleteThread");
-			try
+			using(var adapter = new DataAccessAdapter())
 			{
-				DeleteThreads(threadFilter, trans);
-				trans.Commit();
-				return true;
+				adapter.StartTransaction(IsolationLevel.ReadCommitted, "DeleteThread");
+				try
+				{
+					DeleteThreads(new PredicateExpression(ThreadFields.ThreadID == threadID), adapter);
+					adapter.Commit();
+					return true;
+				}
+				catch
+				{
+					// error occured
+					adapter.Rollback();
+					throw;
+				}
 			}
-			catch
-			{
-				// error occured
-				trans.Rollback();
-				throw;
-			}
-			finally
-			{
-				trans.Dispose();
-			}
-        }
+		}
 
 
 		/// <summary>
@@ -368,13 +367,11 @@ namespace SD.HnD.BL
 		/// </summary>
 		/// <param name="forumFilter">The forum filter.</param>
 		/// <param name="trans">The transaction to use.</param>
-		internal static void DeleteAllThreadsInForum(int forumID, Transaction trans)
+		internal static void DeleteAllThreadsInForum(int forumID, DataAccessAdapter adapter)
 		{
 			// fabricate the threadfilter, based on the passed in forumId. We do this by creating a FieldCompareValuePredicate:
             // WHERE Thread.ForumID = forumID
-			PredicateExpression threadFilter = new PredicateExpression();
-            threadFilter.Add(ThreadFields.ForumID == forumID);
-			DeleteThreads(threadFilter, trans);
+			DeleteThreads(new PredicateExpression(ThreadFields.ForumID == forumID), adapter);
 		}
 
 
@@ -382,43 +379,43 @@ namespace SD.HnD.BL
 		/// Deletes the threads matching the passed in filter, inside the transaction specified.
 		/// </summary>
 		/// <param name="threadFilter">The thread filter.</param>
-		/// <param name="trans">The transaction to use.</param>
-		private static void DeleteThreads(PredicateExpression threadFilter, Transaction trans)
+		/// <param name="adapter">The adapter to use.</param>
+		private static void DeleteThreads(PredicateExpression threadFilter, DataAccessAdapter adapter)
 		{
 			// we've to perform a set of actions in a given order to make sure we're not violating FK constraints in the DB. 
 			
 			// delete messages in thread
-			MessageManager.DeleteAllMessagesInThreads(threadFilter, trans);
+			MessageManager.DeleteAllMessagesInThreads(threadFilter, adapter);
 
             // delete bookmarks (if exists) of the threads to be deleted
             BookmarkCollection bookmarks = new BookmarkCollection();
-            trans.Add(bookmarks);
+            adapter.Add(bookmarks);
             // use again a fieldcompareset predicate
             bookmarks.DeleteMulti(new FieldCompareSetPredicate(BookmarkFields.ThreadID, ThreadFields.ThreadID, SetOperator.In, threadFilter));
 
 			// delete audit info related to this thread. Can't be done directly on the db due to the fact the entities are in a TargetPerEntity hierarchy, which
 			// can't be deleted directly on the db, so we've to fetch the entities first. 
 			AuditDataThreadRelatedCollection threadAuditData = new AuditDataThreadRelatedCollection();
-			trans.Add(threadAuditData);
+			adapter.Add(threadAuditData);
 			// use a fieldcompareset predicate filter, based on the threadFilter. 
 			threadAuditData.GetMulti(new FieldCompareSetPredicate(AuditDataThreadRelatedFields.ThreadID, ThreadFields.ThreadID, SetOperator.In, threadFilter));
 			threadAuditData.DeleteMulti();
 
 			// delete support queue thread entity for this thread (if any)
 			SupportQueueThreadCollection supportQueueThreads = new SupportQueueThreadCollection();
-			trans.Add(supportQueueThreads);
+			adapter.Add(supportQueueThreads);
 			// use again a fieldcompareset predicate
 			supportQueueThreads.DeleteMulti(new FieldCompareSetPredicate(SupportQueueThreadFields.ThreadID, ThreadFields.ThreadID, SetOperator.In, threadFilter));
 
 			// delete threadsubscription entities
 			ThreadSubscriptionCollection threadSubscriptions = new ThreadSubscriptionCollection();
-			trans.Add(threadSubscriptions);
+			adapter.Add(threadSubscriptions);
 			// use again a fieldcompareset predicate
 			threadSubscriptions.DeleteMulti(new FieldCompareSetPredicate(ThreadSubscriptionFields.ThreadID, ThreadFields.ThreadID, SetOperator.In, threadFilter));
 
 			// delete the threads
 			ThreadCollection threads = new ThreadCollection();
-			trans.Add(threads);
+			adapter.Add(threads);
 			// we already have the filter to use, namely the filter passed in.
 			threads.DeleteMulti(threadFilter);
 

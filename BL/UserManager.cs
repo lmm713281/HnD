@@ -34,6 +34,7 @@ using SD.HnD.DAL.DaoClasses;
 using SD.LLBLGen.Pro.ORMSupportClasses;
 using System.Security.Cryptography;
 using System.Web;
+using SD.HnD.DAL.DatabaseSpecific;
 using SD.LLBLGen.Pro.QuerySpec;
 
 namespace SD.HnD.BL
@@ -107,9 +108,9 @@ namespace SD.HnD.BL
 		/// </summary>
 		/// <param name="threadID">The thread ID.</param>
 		/// <param name="userID">The user ID.</param>
-		/// <param name="transactionToUse">The transaction to use. If no transaction is specified, no transaction is created</param>
+		/// <param name="adapter">the adapter to use</param>
 		/// <returns></returns>
-		public static bool AddThreadToSubscriptions(int threadID, int userID, Transaction transactionToUse)
+		public static bool AddThreadToSubscriptions(int threadID, int userID, DataAccessAdapter adapter)
 		{
 			// check if this user is already subscribed to this thread. If not, add a new subscription.
 			ThreadSubscriptionEntity subscription = ThreadGuiHelper.GetThreadSubscription(threadID, userID, transactionToUse);

@@ -1,7 +1,7 @@
 /*
 	This file is part of HnD.
-	HnD is (c) 2002-2007 Solutions Design.
-    http://www.llblgen.com
+	HnD is (c) 2002-2007 Solutions Desi		
+	http://www.llblgen.com
 	http://www.sd.nl
 
 	HnD is free software; you can redistribute it and/or modify
@@ -19,18 +19,12 @@
 */
 using System;
 using System.Data;
-using System.Collections;
-
-using SD.LLBLGen.Pro.ORMSupportClasses;
+using SD.HnD.DAL.DatabaseSpecific;
 using SD.HnD.DAL.EntityClasses;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.DAL.HelperClasses;
-using SD.HnD.DAL;
-using SD.HnD.DAL.DaoClasses;
 using SD.LLBLGen.Pro.QuerySpec;
-using SD.LLBLGen.Pro.QuerySpec.SelfServicing;
+using SD.LLBLGen.Pro.QuerySpec.Adapter;
 using SD.HnD.DAL.FactoryClasses;
-
 
 namespace SD.HnD.BL
 {
@@ -72,9 +66,12 @@ namespace SD.HnD.BL
 			{
 				q.AndWhere(qf.Field("ForumCountList", "ForumCount")!=0);
 			}
-			TypedListDAO dao = new TypedListDAO();
-			var results = dao.FetchAsDataTable(q);
-			return results.DefaultView;
+
+			using(var adapter = new DataAccessAdapter())
+			{
+				var results = adapter.FetchAsDataTable(q);
+				return results.DefaultView;
+			}
 		}
 
 
@@ -82,13 +79,14 @@ namespace SD.HnD.BL
         /// Gets all sections. 
         /// </summary>
         /// <returns>SectionCollection</returns>
-        public static SectionCollection GetAllSections()
+        public static EntityCollection<SectionEntity> GetAllSections()
         {
 			var q = new QueryFactory().Section.OrderBy(SectionFields.OrderNo.Ascending(), SectionFields.SectionName.Ascending());
-			SectionCollection sections = new SectionCollection();
-			sections.GetMulti(q);
-            return sections;
-        }
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.FetchQuery(q, new EntityCollection<SectionEntity>());
+			}
+		}
 
 
 		/// <summary>
@@ -98,13 +96,11 @@ namespace SD.HnD.BL
 		/// <returns>loaded sectionentity or null if not found</returns>
 		public static SectionEntity GetSection(int sectionID)
 		{
-			SectionEntity toReturn = new SectionEntity(sectionID);
-			if(toReturn.IsNew)
+			using(var adapter = new DataAccessAdapter())
 			{
-				// not found
-				return null;
+				var section = new SectionEntity(sectionID);
+				return adapter.FetchEntity(section) ? section : null;
 			}
-			return toReturn;
 		}
 	}
 }

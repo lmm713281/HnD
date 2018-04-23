@@ -1,0 +1,573 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SD.HnD.UBBParser</name>
+    </assembly>
+    <members>
+        <member name="T:SD.HnD.UBBParser.Converter">
+            <summary>
+            Entry point for the complete UBB Parser. Use this class to convert a string in UBB syntaxis to XML. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Converter.ConvertToXml(System.String)">
+            <summary>
+            Converts the passed in string with UBB tokens to XML.
+            </summary>
+            <param name="toConvert">The string to convert.</param>
+            <returns>An XmlDocument object with the string with UBB tokens in Xml format. This XmlDocument is now usable to convert the string to
+            for example HTML by using a Xslt stylesheet.</returns>
+        </member>
+        <member name="T:SD.HnD.UBBParser.BuildInTokenID">
+            <summary>
+            General Enumeration of build in tokens, which are tokens which should always have these IDs
+            </summary>
+        </member>
+        <member name="F:SD.HnD.UBBParser.BuildInTokenID.EOF">
+            <summary>
+            TokenID for the marking of EOF or '$', which means the end of the tokenstream. No special actions required. 
+            </summary>
+        </member>
+        <member name="F:SD.HnD.UBBParser.BuildInTokenID.UntokenizedLiteralString">
+            <summary>
+            TokenID for the literal unquoted string, i.e. the literal text which doesn't match with any token definition.
+            All parsers using this Lexical analyzer should support this token. It contains all scanned characters which 
+            didn't lead to a match with the passed in set of tokendefinitions.
+            </summary>
+        </member>
+        <member name="T:SD.HnD.UBBParser.Token">
+            <summary>
+            Tokendefinitions for this parser
+            </summary>
+        </member>
+        <member name="T:SD.HnD.UBBParser.NonTerminalType">
+            <summary>
+            Non-terminal type definitions. These values are used to specify the nonterminal type of a
+            NonTerminal object. The interpreter can then handle the nonterminal objects according
+            to their nonterminal Type.
+            </summary>
+        </member>
+        <member name="T:SD.HnD.UBBParser.NoTokenDefinitionsSpecifiedException">
+            <summary>
+            Exception which is thrown when the Tokenize process is started without any Token definitions present
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.NoTokenDefinitionsSpecifiedException.#ctor(System.String)">
+            <summary>
+            Creates a new <see cref="T:SD.HnD.UBBParser.NoTokenDefinitionsSpecifiedException"/> instance.
+            </summary>
+            <param name="sMessage">S message.</param>
+        </member>
+        <member name="T:SD.HnD.UBBParser.ITokenDefinition">
+            <summary>
+            Interface for the TokenDefinition class. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.ITokenDefinition.CreateTokenFromDefinition">
+            <summary>
+            // Token factory, which will create a tokenobject from this definition. Should fill in TokenID and RelatedTokenDefinition
+            </summary>
+            <returns>Token definition</returns>
+        </member>
+        <member name="P:SD.HnD.UBBParser.ITokenDefinition.TokenID">
+            <summary>
+            Gets or sets the token ID.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:SD.HnD.UBBParser.ITokenDefinition.MatchingRegularExpression">
+            <summary>
+            Gets or sets the matching regular expression.
+            </summary>
+            <value></value>
+        </member>
+        <member name="T:SD.HnD.UBBParser.IToken">
+            <summary>
+            Interface for the Token class. 
+            </summary>
+        </member>
+        <member name="P:SD.HnD.UBBParser.IToken.TokenID">
+            <summary>
+            // masquerading property to retrieve data from RelatedTokenDefinition
+            </summary>
+        </member>
+        <member name="P:SD.HnD.UBBParser.IToken.LiteralMatchedTokenText">
+            <summary>
+            Gets or sets the literal matched token text.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:SD.HnD.UBBParser.IToken.RelatedTokenDefinition">
+            <summary>
+            Gets or sets the related token definition.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:SD.HnD.UBBParser.IToken.StartIndexInInputStream">
+            <summary>
+            Gets or sets the start index in input stream.
+            </summary>
+            <value></value>
+        </member>
+        <member name="T:SD.HnD.UBBParser.Interpreter">
+            <summary>
+            Generic UBB interpreter which interprets non-terminals, produced by the UBB parser and produces XML
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.#ctor(System.Collections.Generic.List{SD.HnD.UBBParser.NonTerminal})">
+            <summary>
+            Ctor. Sets up the interpreter
+            </summary>
+            <param name="parseTree">List with non-terminals to interpret</param>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.Interpret">
+            <summary>
+            Walks the complete parse tree, and each non-terminal found is handled by its handler. The
+            handler will check out the member parameters of this class if it can do something.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.InnerGeneralTextHandler(SD.HnD.UBBParser.NonTerminalType)">
+            <summary>
+            Handles all nonterminals from the current position. This routine will
+            return when the passed in nonterminal is seen. The passed in nonterminal is the current nonterminal after this routine ends.
+            </summary>
+            <param name="endType">The nonterminal type which marks the end of the tokenstream to walk.</param>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.InnerLiteralTextHandler(SD.HnD.UBBParser.NonTerminalType,System.Boolean)">
+            <summary>
+            Handles all nonterminals from the current position. This routine will
+            return when the passed in nonterminal is seen. The passed in nonterminal is the current nonterminal after this routine ends.
+            </summary>
+            <param name="endType">The nonterminal type which marks the end of the tokenstream to walk.</param>
+            <param name="allowCrLf">If set to true, CrLf tokens are handled, otherwise skipped as normal text</param>
+            <remarks>Routine used to handle the nonterminals inside code text and other nonterminals which only allow literal text inside themselves.
+            This is done in a separate loop because not all nonterminals can be located inside code text for example, see syntaxis</remarks>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.InnerFormattedTextHandler(SD.HnD.UBBParser.NonTerminalType)">
+            <summary>
+            Handles all nonterminals from the current position. This routine will
+            return when the passed in nonterminal is seen. The passed in nonterminal is the current nonterminal after this routine ends.
+            </summary>
+            <param name="endType">The nonterminal type which marks the end of the tokenstream to walk.</param>
+            <remarks>Routine used to handle the nonterminals inside formatted text. This is done in a separate loop because not all nonterminals can 
+            be located inside formatted text, see syntaxis</remarks>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.InnerListHandler">
+            <summary>
+            Handles all nonterminals inside a List nonterminal. It expects listitemstart/end pairs. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.FormattedTextNTHandler">
+            <summary>
+            Handles all nonterminals from the current position for formatted text inside nonterminals which can only handle formatted text. This routine will
+            return when an end element is seen of a nonterminal which can be part of FormattedText. See syntax.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.GeneralTextNTHandler">
+            <summary>
+            Looks at the non-terminal at position _nonTerminalIndex of the parse result array list and calls the handler.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleCrLf">
+            <summary>
+            Handles a CRLF nonterminal. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleTab">
+            <summary>
+            Handles the tab nonterminal
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleQuotedTextStart">
+            <summary>
+            Handles quoted text start. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleUrlStart">
+            <summary>
+            Handles url start. This handler handles the complete [url...]URI[/url] sequence.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleImageStart">
+            <summary>
+            Handles image start. This handler handles the complete [img...]ImageUrl[/img] sequence.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleListStart">
+            <summary>
+            Handles List start. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleColoredTextStart">
+            <summary>
+            Handles colored text start. colored text contains a token which has to be a 6character long hex string. If the value is off, black is used.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleEmailAddress">
+            <summary>
+            Handles the EmailAddress nonterminal. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleLiteralText">
+            <summary>
+            Handles the literal text nonterminal.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleLiteralText(System.Boolean)">
+            <summary>
+            Handles the literal text nonterminal.
+            </summary>
+            <param name="emitSurroundingElement">if set to true, it will emit the surrounding element literaltext as well. </param>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleCodeTextStart">
+            <summary>
+            Handles code text start. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleOfftopicTextStart">
+            <summary>
+            Handles offtopic text start. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleListItemStart">
+            <summary>
+            Handles listitem start. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleSizedTextStart">
+            <summary>
+            Handles sized text start. Sized text contains a token which has to be a 1 character long string. If the value is wrong, 3 (default) is used
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleSmiley">
+            <summary>
+            Handles a smiley nonterminal.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleUri">
+            <summary>
+            Handles the URI nonterminal. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.HandleSimpleFormattedTextStart">
+            <summary>
+            Handles simply formatted text start. Simple formatted text is text surrounded with bold,italic, striked or underlined. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Interpreter.StripFromQuotes(System.String)">
+            <summary>
+            Strips the passed in string from quotes (double or single)
+            </summary>
+            <param name="toStrip">To strip.</param>
+            <returns>toStrip without the surrounding quotes.</returns>
+        </member>
+        <member name="T:SD.HnD.UBBParser.LexicalAnalyzer">
+            <summary>
+            Lexical Analyzer class. A parser creates an instance of this class and uses this class to construct
+            a list of tokens to parse.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.LexicalAnalyzer.Tokenize(System.String,System.Boolean)">
+            <summary>
+            Starts the tokenization of the string ToTokenize and returns the tokenization as a FIFO Queue
+            This method will throw exceptions when necessary input isn't useable:
+            </summary>
+            <exception cref="T:SD.HnD.UBBParser.NoTokenDefinitionsSpecifiedException">Thrown when the Tokenize method is called and there are
+            no TokenDefinitions found</exception>
+            <param name="stringToTokenize">The string which has to be tokenized. If stringToTokenize is empty, an empty Queue object
+            is returned.</param>
+            <param name="removeOverlappedTokens">Flag to signal the tokenizer to remove overlapped tokens found. This is necessary
+            when your parser logic shouldn't be bothered with overlapped tokens, like: (UBB syntaxis + strings) "this [b]is[/b] overlapping"
+            will result in a string token (if specified) and 2 tokens of the UBB syntax: [b] and [/b]. If you don't want these last
+            2 tokens to appear, since they're included in another token, the string token, set removeOverlappedTokens to true</param>
+            <returns>Queue with the tokens or null if an internal error occured.</returns>
+        </member>
+        <member name="T:SD.HnD.UBBParser.NonTerminal">
+            <summary>
+            Generic implementation of a NonTerminal object, which is a result of 
+            the token parse process. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.NonTerminal.#ctor(SD.HnD.UBBParser.NonTerminalType)">
+            <summary>
+            CTor
+            </summary>
+            <param name="typeOfNonTerminal">The type of this nonterminal</param>
+        </member>
+        <member name="P:SD.HnD.UBBParser.NonTerminal.CorrespondingEndNTIndex">
+            <summary>
+            Gets / sets correspondingEndNTIndex. THis is the index of the corresponding end NonTerminal of the current Non Terminal.
+            if the current nonterminal is an end nonterminal (CodeTextEnd, QuotedTextEnd etc.) or doesn't have an end NonTerminal, this index is the
+            same as the index of the current NonTerminal. The index is the index in the parserResult list of nonterminals.
+            </summary>
+        </member>
+        <member name="P:SD.HnD.UBBParser.NonTerminal.Tokens">
+            <summary>
+            Gets the token collection.
+            </summary>
+        </member>
+        <member name="P:SD.HnD.UBBParser.NonTerminal.Type">
+            <summary>
+            Gets / sets the nonterminal type
+            </summary>
+        </member>
+        <member name="T:SD.HnD.UBBParser.Parser">
+            <summary>
+            UBB Parser. Parses the input passed in into tokens which are interpreted by the UBB Interpreter
+            </summary>
+        </member>
+        <member name="F:SD.HnD.UBBParser.Parser.TokenDefinitions">
+            <summary>
+            Static declared tokendefinition collection. As token regex objects are threadsafe, re-creating them is not necessary.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.#cctor">
+            <summary>
+            Initializes the <see cref="T:SD.HnD.UBBParser.Parser"/> class' static members, which is the tokendefinition collection
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.#ctor(System.String)">
+            <summary>
+            CTor
+            </summary>
+            <param name="stringToParse">the text string to parse.</param>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.StartParseProcess">
+            <summary>
+            Starts the parse process
+            </summary>
+            <returns>List object with nonterminal objects. This can be fed to the interpreter.</returns>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.ParseTokens">
+            <summary>
+            Parses the token stream into nonterminal objects. Uses simple LL(1) algo.
+            Fills _nonTerminalStream;
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.ParseNonTerminal">
+            <summary>
+            Parses the current statement at the head of the token stream. It assumes the
+            statement start token is still at the start of the stream.
+            </summary>
+            <returns>
+            Filled NonTerminal object with the data of the statement parsed.
+            </returns>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.HandleURLStart(System.Collections.Generic.List{SD.HnD.UBBParser.IToken})">
+            <summary>
+            Handles the URL start tokens and converts them into a nontermimal, if the syntax is correct. 
+            </summary>
+            <param name="tokensInStatement">The tokens in statement.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.HandleSizedTextStart(System.Collections.Generic.List{SD.HnD.UBBParser.IToken})">
+            <summary>
+            Handles the Sized start tokens and converts them into a nontermimal, if the syntax is correct. 
+            </summary>
+            <param name="tokensInStatement">The tokens in statement.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.HandleQuotedTextStart(System.Collections.Generic.List{SD.HnD.UBBParser.IToken})">
+            <summary>
+            Handles the Quoted start tokens and converts them into a nontermimal, if the syntax is correct. 
+            </summary>
+            <param name="tokensInStatement">The tokens in statement.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.HandleListStart(System.Collections.Generic.List{SD.HnD.UBBParser.IToken})">
+            <summary>
+            Handles the List start tokens and converts them into a nontermimal, if the syntax is correct. 
+            </summary>
+            <param name="tokensInStatement">The tokens in statement.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.HandleImageStart(System.Collections.Generic.List{SD.HnD.UBBParser.IToken})">
+            <summary>
+            Handles the Image start tokens and converts them into a nontermimal, if the syntax is correct. 
+            </summary>
+            <param name="tokensInStatement">The tokens in statement.</param>
+            <returns></returns>
+            <remarks>Handles the complete [img...]...[/img] sequence</remarks>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.HandleColoredTextStart(System.Collections.Generic.List{SD.HnD.UBBParser.IToken})">
+            <summary>
+            Handles the Color start tokens and converts them into a nontermimal, if the syntax is correct. 
+            </summary>
+            <param name="tokensInStatement">The tokens in statement.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.HandleSingleTokenTag(System.Collections.Generic.List{SD.HnD.UBBParser.IToken})">
+            <summary>
+            Handles the StatementStart single-token-statement-token StatementEnd statement 
+            </summary>
+            <param name="tokensInStatement">Tokens already scanned</param>
+            <returns>Filled NonTerminal with the tokens scanned. If there were no errors, this nonterminal will be 
+            of type EndIf. If there were errors, this nonterminal will be of type literaltext.</returns>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.TestCurrentToken(SD.HnD.UBBParser.Token,System.String,System.Boolean)">
+            <summary>
+            Tests the current token on the stack if it is the token passed in as tokenToTest. If so, true is returned.
+            If not, false is returned. If testCantFail is true, the caller assumes a token at the start of the queue. If that's
+            not the case, an internal parser error has been detected and an exception is thrown. The token at the start of the queue
+            is not popped from the queue.
+            </summary>
+            <param name="tokenToTest">Token which should be the first token in the queue</param>
+            <param name="nameCaller">name of the caller of this method. Used in the exception thrown when an internal parser error
+            is detected</param>
+            <param name="testCantFail">flag to signal if failure of the test results in an internal parser error</param>
+            <returns>true if the token at the start of the queue is equal to tokenToTest, false otherwise</returns>
+            <exception cref="T:System.ApplicationException">When testCantFail is true and the test fails.</exception>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.TestCurrentToken(SD.HnD.UBBParser.Token,System.String,System.Boolean,System.Collections.Generic.Queue{SD.HnD.UBBParser.IToken})">
+            <summary>
+            Tests the current token on the stack if it is the token passed in as tokenToTest. If so, true is returned.
+            If not, false is returned. If testCantFail is true, the caller assumes a token at the start of the queue. If that's
+            not the case, an internal parser error has been detected and an exception is thrown. The token at the start of the queue
+            is not popped from the queue.
+            </summary>
+            <param name="tokenToTest">Token which should be the first token in the queue</param>
+            <param name="nameCaller">name of the caller of this method. Used in the exception thrown when an internal parser error
+            is detected</param>
+            <param name="testCantFail">flag to signal if failure of the test results in an internal parser error</param>
+            <param name="tokens">token queue to test</param>
+            <returns>true if the token at the start of the queue is equal to tokenToTest, false otherwise</returns>
+            <exception cref="T:System.ApplicationException">When testCantFail is true and the test fails.</exception>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.ConvertPoppedTokensToLiteralText(System.Collections.Generic.List{SD.HnD.UBBParser.IToken})">
+            <summary>
+            Converts the passed in set of popped tokens to one nonterminal of type LiteralText. This
+            routine is used when an error is found in the stream so the currently popped tokens are
+            apparantly not part of a statement, therefor should be converted to a literal string nonterminal,
+            which will be transformed by the interpreter as a textstream. The error causing token is <i>not</i> included
+            in the tokensPopped collection.
+            </summary>
+            <param name="tokensPopped">Set of tokens popped, EXCLUDING the error causing token, which will be used as one set
+            of tokens of one nonterminal of type literal text</param>
+            <returns>the literal text nonterminal with all the tokens passed in.</returns>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.StripWhiteSpace">
+            <summary>
+            Will remove all tokens which are considered whitespace from the tokenstream. 
+            These are the tokens:
+            'WhiteSpace'.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.StripWhiteSpace(System.Collections.Generic.Queue{SD.HnD.UBBParser.IToken})">
+            <summary>
+            Will remove all tokens which are considered whitespace from the tokenstream passed in
+            These are the tokens:
+            'WhiteSpace'.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.CreateTokenDefinitions">
+            <summary>
+            Create the tokendefinitions. Tokendefinitions are regular expressions which match a textsnippet so the snippet can be represented by the token
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Parser.GetStartNTStack(SD.HnD.UBBParser.NonTerminalType)">
+            <summary>
+            Gets the start NT stack for the nonterminal type passed in. If the stack isn't available, a new one is created. 
+            </summary>
+            <param name="ntType">Type of the nt.</param>
+            <returns></returns>
+        </member>
+        <member name="P:SD.HnD.UBBParser.Parser.StringToParse">
+            <summary>
+            Gets / sets stringToParse
+            </summary>
+        </member>
+        <member name="T:SD.HnD.UBBParser.UBBToken">
+            <summary>
+            Implements the IToken interface for the UBB parser for HnD
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.UBBToken.#ctor">
+            <summary>
+            CTor
+            </summary>
+        </member>
+        <member name="P:SD.HnD.UBBParser.UBBToken.TokenID">
+            <summary>
+            Gets the token ID.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:SD.HnD.UBBParser.UBBToken.LiteralMatchedTokenText">
+            <summary>
+            Gets or sets the literal matched token text.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:SD.HnD.UBBParser.UBBToken.RelatedTokenDefinition">
+            <summary>
+            Gets or sets the related token definition.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:SD.HnD.UBBParser.UBBToken.StartIndexInInputStream">
+            <summary>
+            Gets or sets the start index in input stream.
+            </summary>
+            <value></value>
+        </member>
+        <member name="T:SD.HnD.UBBParser.UBBTokenDefinition">
+            <summary>
+            UBBTokenDefinition. Implements ITokenDefinition
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.UBBTokenDefinition.#ctor">
+            <summary>
+            CTor
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.UBBTokenDefinition.#ctor(System.Int32,System.String,System.Text.RegularExpressions.RegexOptions)">
+            <summary>
+            CTor
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.UBBTokenDefinition.CreateTokenFromDefinition">
+            <summary>
+            Creates a new token object using this definition and prefills it. 
+            </summary>
+            <returns>An TDLToken token</returns>
+        </member>
+        <member name="P:SD.HnD.UBBParser.UBBTokenDefinition.TokenID">
+            <summary>
+            gets / sets the tokenid for this tokenobject
+            </summary>
+        </member>
+        <member name="P:SD.HnD.UBBParser.UBBTokenDefinition.MatchingRegularExpression">
+            <summary>
+            gets/ sets the matching regular expression object
+            </summary>
+        </member>
+        <member name="T:SD.HnD.UBBParser.Tokenizer">
+            <summary>
+            Tokenizer class. This class tokenizes the given input using the given tokentables to a queue of tokens. 
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Tokenizer.#ctor">
+            <summary>
+            CTor.
+            </summary>
+        </member>
+        <member name="M:SD.HnD.UBBParser.Tokenizer.Tokenize">
+            <summary>
+            Starts the tokenization of the value set into ToTokenize and will return a Queue with IToken objects
+            </summary>
+            <exception cref="T:SD.HnD.UBBParser.NoTokenDefinitionsSpecifiedException">Thrown when no TokenDefinition list is specified</exception>
+            <returns>Queue with IToken objects which represent a tokenized version of the inputstring ToTokenize</returns>
+        </member>
+        <member name="P:SD.HnD.UBBParser.Tokenizer.RemoveOverlappedTokens">
+            <summary>
+            If true, will remove encapsulated tokens found. For example ForEach contains 'For'. When RemoveOverlappedTokens is true, 'For' would
+            be removed as a found token.
+            </summary>
+        </member>
+        <member name="P:SD.HnD.UBBParser.Tokenizer.ToTokenize">
+            <summary>
+            Sets the string to tokenize
+            </summary>
+        </member>
+    </members>
+</doc>

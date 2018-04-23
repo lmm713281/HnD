@@ -19,16 +19,16 @@
 */
 using System;
 using System.Data;
+using System.Net.Mail;
 using SD.HnD.Utility;
 
 using SD.LLBLGen.Pro.QuerySpec;
-using SD.LLBLGen.Pro.QuerySpec.SelfServicing;
+using SD.LLBLGen.Pro.QuerySpec.Adapter;
 using SD.LLBLGen.Pro.ORMSupportClasses;
 using SD.HnD.DAL.EntityClasses;
 using SD.HnD.DAL;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.DAL.HelperClasses;
-using SD.HnD.DAL.DaoClasses;
+using SD.HnD.DAL.DatabaseSpecific;
 using SD.HnD.DAL.FactoryClasses;
 
 namespace SD.HnD.BL
@@ -45,26 +45,20 @@ namespace SD.HnD.BL
 		/// <returns>True if succeeded, false otherwise</returns>
 		public static bool DeleteMessage(int messageID)
 		{
-			Transaction trans = new Transaction(IsolationLevel.ReadCommitted, "DeleteMessage");
-
-            try
+			using(var adapter = new DataAccessAdapter())
 			{
-				// formulate a filter so we can re-use the delete routine for all messages in threads matching a filter. 
-				PredicateExpression messageFilter = new PredicateExpression(MessageFields.MessageID == messageID);
-
-				// call the routine which is used to delete 1 or more messages and related data from the db.
-				DeleteMessages(messageFilter, trans);
-				trans.Commit();
-				return true;
-			}
-			catch(Exception)
-			{
-				trans.Rollback();
-				throw;
-			}
-			finally
-			{
-				trans.Dispose();
+				adapter.StartTransaction(IsolationLevel.ReadCommitted, "DeleteMessage");
+				try
+				{
+					MessageManager.DeleteMessages(new PredicateExpression(MessageFields.MessageID == messageID), adapter);
+					adapter.Commit();
+					return true;
+				}
+				catch(Exception)
+				{
+					adapter.Rollback();
+					throw;
+				}
 			}
 		}
 		
@@ -73,15 +67,13 @@ namespace SD.HnD.BL
 		/// Deletes all messages in threads which match the passed in filter. 
 		/// </summary>
 		/// <param name="threadFilter">The thread filter.</param>
-		/// <param name="trans">The transaction to use.</param>
-		internal static void DeleteAllMessagesInThreads(PredicateExpression threadFilter, Transaction trans)
+		/// <param name="adapter">The adapter to use.</param>
+		internal static void DeleteAllMessagesInThreads(PredicateExpression threadFilter, DataAccessAdapter adapter)
 		{
 			// fabricate the messagefilter, based on the passed in filter on threads. We do this by creating a FieldCompareSetPredicate:
 			// WHERE Message.ThreadID IN (SELECT ThreadID FROM Thread WHERE threadFilter)
-			var messageFilter = MessageFields.ThreadID.In(new QueryFactory().Create()
-																.Select(ThreadFields.ThreadID)
-																.Where(threadFilter));
-			DeleteMessages(messageFilter, trans);
+			var messageFilter = MessageFields.ThreadID.In(new QueryFactory().Create().Select(ThreadFields.ThreadID).Where(threadFilter));
+			DeleteMessages(messageFilter, adapter);
 		}
 
 
@@ -89,29 +81,24 @@ namespace SD.HnD.BL
 		/// Deletes the messages matching the messagefilter passed in
 		/// </summary>
 		/// <param name="messageFilter">The message filter.</param>
-		/// <param name="trans">The transaction to use.</param>
-		private static void DeleteMessages(IPredicate messageFilter, Transaction trans)
+		/// <param name="adapter">The adapter to use</param>
+		private static void DeleteMessages(IPredicate messageFilter, DataAccessAdapter adapter)
 		{
 			// first delete all audit info for these message. This isn't done by a batch call directly on the db, as this is a targetperentity hierarchy
-			// which can't be deleted directly into the database in all cases, so we first fetch the entities to delete. 
-			AuditDataMessageRelatedCollection messageAudits = new AuditDataMessageRelatedCollection();
-			trans.Add(messageAudits);
-			// use a fieldcompareset predicate to get the auditdata related to this message and then delete all of them using the collection.
-			messageAudits.GetMulti(new FieldCompareSetPredicate(AuditDataMessageRelatedFields.MessageID, MessageFields.MessageID, SetOperator.In, messageFilter));
-			messageAudits.DeleteMulti();
+			// which can't be deleted directly into the database in all cases, so we first fetch the entities to delete.
+			var qf = new QueryFactory();
+			var q = qf.AuditDataMessageRelated
+						  .Where(AuditDataMessageRelatedFields.MessageID.In(qf.Create().Select(MessageFields.MessageID).Where(messageFilter)));
+			var messageAudits = adapter.FetchQuery(q);
+			adapter.DeleteEntityCollection(messageAudits);
 
 			// delete all attachments for this message. This can be done directly onto the db.
-			AttachmentCollection attachments = new AttachmentCollection();
-			trans.Add(attachments);
-			// delete these directly from the db, using a fieldcompareset predicate
-			attachments.DeleteMulti(new FieldCompareSetPredicate(AttachmentFields.MessageID, MessageFields.MessageID, SetOperator.In, messageFilter));
-
+			adapter.DeleteEntitiesDirectly(typeof(Attachment),  
+										   new RelationPredicateBucket(AttachmentFields.MessageID.In(qf.Create()
+																									   .Select(MessageFields.MessageID)
+																									   .Where(messageFilter))));
 			// delete the message/messages
-			MessageCollection messages = new MessageCollection();
-			trans.Add(messages);
-			// use the passed in filter to remove the messages
-			messages.DeleteMulti(messageFilter);
-
+			adapter.DeleteEntitiesDirectly(typeof(MessageEntity), new RelationPredicateBucket(messageFilter));
 			// don't commit the transaction, leave that to the caller.
 		}
 
@@ -129,17 +116,22 @@ namespace SD.HnD.BL
 		/// <param name="messageAsXML">Message text as XML, which is the result of the parse action on MessageText.</param>
 		/// <returns>True if succeeded, false otherwise</returns>
 		/// <remarks>This routine is migrated to LLBLGen Pro</remarks>
-        public static bool UpdateEditedMessage(int editorUserID, int editedMessageID, string messageText, string messageAsHTML, 
-				string editorUserIDIPAddress, string messageAsXML)
+		public static bool UpdateEditedMessage(int editorUserID, int editedMessageID, string messageText, string messageAsHTML, string editorUserIDIPAddress, string messageAsXML)
 		{
             // now save the message. First pull it from the db
-			MessageEntity message = new MessageEntity(editedMessageID);
-
-            //update the fields with the new passed values
-			message.MessageText = messageText;
-			message.MessageTextAsHTML = messageAsHTML;
-			message.MessageTextAsXml = messageAsXML;
-			return message.Save();
+			using(var adapter = new DataAccessAdapter())
+			{
+				var message = new MessageEntity(editedMessageID);
+				if(!adapter.FetchEntity(message))
+				{
+					return false;
+				}
+				//update the fields with the new passed values
+				message.MessageText = messageText;
+				message.MessageTextAsHTML = messageAsHTML;
+				message.MessageTextAsXml = messageAsXML;
+				return adapter.SaveEntity(message);
+			}
 		}
 
 
@@ -150,6 +142,7 @@ namespace SD.HnD.BL
 		/// <param name="amountToParse">Amount to parse.</param>
 		/// <param name="startDate">Start date.</param>
 		/// <param name="reGenerateHTML">If true, the HTML is also re-generated and saved.</param>
+		/// <param name="parserData">the parser data from the parser</param>
 		/// <returns>the amount of messages re-parsed</returns>
 		public static int ReParseMessages(int amountToParse, DateTime startDate, bool reGenerateHTML, ParserData parserData)
 		{
@@ -165,53 +158,50 @@ namespace SD.HnD.BL
 				q.AndWhere(MessageFields.PostingDate <= DateTime.Now);
 			}
 
-			TypedListDAO dao = new TypedListDAO();
-
 			bool parsingFinished = false;
 			int amountProcessed = 0;
-			int pageSize = 100;
+			const int pageSize = 100;
 			int pageNo = 1;
-
-			while(!parsingFinished)
+			using(var adapter = new DataAccessAdapter())
 			{
-				q.Page(pageNo, pageSize);
-				DataTable messagesToParse = dao.FetchAsDataTable(q);
-				parsingFinished = (messagesToParse.Rows.Count <= 0);
-
-				if(!parsingFinished)
+				while(!parsingFinished)
 				{
-					foreach(DataRow row in messagesToParse.Rows)
+					q.Page(pageNo, pageSize);
+					DataTable messagesToParse = adapter.FetchAsDataTable(q);
+					parsingFinished = (messagesToParse.Rows.Count <= 0);
+
+					if(!parsingFinished)
 					{
-						MessageEntity directUpdater = new MessageEntity();
-						directUpdater.IsNew = false;
-
-						string messageXML = string.Empty;
-						string messageHTML = string.Empty;
-						TextParser.ReParseMessage((string)row["MessageText"], reGenerateHTML, parserData, out messageXML, out messageHTML);
-
-						// use the directupdater entity to create an update query without fetching the entity first.
-						directUpdater.Fields[(int)MessageFieldIndex.MessageID].ForcedCurrentValueWrite((int)row["MessageID"]);
-						directUpdater.MessageTextAsXml = messageXML;
-
-						if(reGenerateHTML)
+						foreach(DataRow row in messagesToParse.Rows)
 						{
-							directUpdater.MessageTextAsHTML=messageHTML;
+							MessageEntity directUpdater = new MessageEntity();
+							directUpdater.IsNew = false;
+
+							string messageXML = string.Empty;
+							string messageHTML = string.Empty;
+							TextParser.ReParseMessage((string)row["MessageText"], reGenerateHTML, parserData, out messageXML, out messageHTML);
+
+							// use the directupdater entity to create an update query without fetching the entity first.
+							directUpdater.Fields[(int)MessageFieldIndex.MessageID].ForcedCurrentValueWrite((int)row["MessageID"]);
+							directUpdater.MessageTextAsXml = messageXML;
+							if(reGenerateHTML)
+							{
+								directUpdater.MessageTextAsHTML = messageHTML;
+							}
+							directUpdater.Fields.IsDirty = true;
+							adapter.SaveEntity(directUpdater);
 						}
-						directUpdater.Fields.IsDirty=true;
+						amountProcessed += messagesToParse.Rows.Count;
+						pageNo++;
 
-						// no transactional update.
-						directUpdater.Save();
-					}
-
-					amountProcessed += messagesToParse.Rows.Count;
-					pageNo++;
-
-					if(amountToParse > 0)
-					{
-						parsingFinished = (amountToParse <= amountProcessed);
+						if(amountToParse > 0)
+						{
+							parsingFinished = (amountToParse <= amountProcessed);
+						}
 					}
 				}
 			}
+
 			return amountProcessed;
 		}
 
@@ -219,27 +209,48 @@ namespace SD.HnD.BL
 		/// <summary>
 		/// Deletes the attachment with the id specified.
 		/// </summary>
+		/// <param name="messageID">The id of the message the attachment belongs to</param>
 		/// <param name="attachmentID">The attachment ID.</param>
-		public static void DeleteAttachment(int attachmentID)
+		public static void DeleteAttachment(int messageID, int attachmentID)
 		{
-			// delete the attachment directly from the db, without loading it first into memory, so the attachment won't eat up memory unnecessary.
-			AttachmentCollection attachments = new AttachmentCollection();
-			attachments.DeleteMulti((AttachmentFields.AttachmentID == attachmentID));
+			// delete the attachment directly from the db, without loading it first into memory
+			using(var adapter = new DataAccessAdapter())
+			{
+				adapter.DeleteEntitiesDirectly(typeof(AttachmentEntity), new RelationPredicateBucket((AttachmentFields.AttachmentID == attachmentID).And(AttachmentFields.MessageID==messageID)));
+			}
 		}
 
 
 		/// <summary>
-		/// Approves / revokes the approval of the attachment with ID passed in.
+		/// Toggles the approval of the attachment with ID passed in. Optionally audits the change if userIdForAuditing is set to a value of 1 or higher
 		/// </summary>
+		/// <param name="messageId">the id of the message the attachment is assigned to</param>
 		/// <param name="attachmentID">The attachment ID.</param>
-		/// <param name="approved">the new flag value for Approved</param>
-		public static void ModifyAttachmentApproval(int attachmentID, bool approved)
+		/// <param name="userIdForAuditing">THe user id for the auditing action if the change was successful. If 0 or lower, it's ignored and no auditing will take place</param>
+		/// <param name="newState">the new state of the approved flag for the attachment, if operation was successful</param>
+		/// <returns>true if operation was successful, false otherwise. If false, newState is undefined.</returns>
+		public static bool ToggleAttachmentApproval(int messageId, int attachmentID, int userIdForAuditing, out bool newState)
 		{
-			// we'll update the approved flag directly in the db, so we don't load the whole attachment into memory. 
-			AttachmentEntity updater = new AttachmentEntity();
-			AttachmentCollection attachments = new AttachmentCollection();
-			updater.Approved = approved;
-			attachments.UpdateMulti(updater, (AttachmentFields.AttachmentID == attachmentID));
+			newState = false;
+			using(var adapter = new DataAccessAdapter())
+			{
+				// fetch the attachment, but exclude the file contents, as we don't need that and it can be quite big
+				var attachment = adapter.FetchNewEntity<AttachmentEntity>(new RelationPredicateBucket((AttachmentFields.AttachmentID == attachmentID).And(AttachmentFields.MessageID == messageId)), 
+																		  null, null, new ExcludeFieldsList(AttachmentFields.Filecontents));
+				if(attachment.IsNew)
+				{
+					// not found
+					return false;
+				}
+				if(userIdForAuditing > 0)
+				{
+					SecurityManager.AuditApproveAttachment(userIdForAuditing, attachmentID);
+				}
+				attachment.Approved = !attachment.Approved;
+				newState = attachment.Approved;
+				adapter.SaveEntity(attachment);
+			}
+			return true;
 		}
 
 
@@ -252,16 +263,18 @@ namespace SD.HnD.BL
 		/// <param name="approveValue">the value for the approved flag</param>
 		public static void AddAttachment(int messageID, string fileName, byte[] fileContents, bool approveValue)
 		{
-			AttachmentEntity newAttachment = new AttachmentEntity();
-			newAttachment.MessageID = messageID;
-			newAttachment.Filename = fileName;
-			newAttachment.Filecontents = fileContents;
-			newAttachment.Filesize = fileContents.Length;
-			newAttachment.Approved = approveValue;
-			newAttachment.AddedOn = DateTime.Now;
-
-			// save.
-			newAttachment.Save();
+			using(var adapter = new DataAccessAdapter())
+			{
+				adapter.SaveEntity(new AttachmentEntity
+								   {
+									   MessageID = messageID,
+									   Filename = fileName,
+									   Filecontents = fileContents,
+									   Filesize = fileContents.Length,
+									   Approved = approveValue,
+									   AddedOn = DateTime.Now
+								   });
+			}
 		}
 
 
@@ -271,65 +284,55 @@ namespace SD.HnD.BL
 		/// </summary>
 		/// <param name="threadID">The thread ID.</param>
 		/// <param name="userID">The user ID.</param>
-		/// <param name="transactionToUse">The transaction to use.</param>
+		/// <param name="adapter"></param>
 		/// <param name="postingDate">The posting date.</param>
 		/// <param name="addToQueueIfRequired">if set to true, the thread will be added to the default queue of the forum the thread is in, if the forum
 		/// has a default support queue and the thread isn't already in a queue.</param>
+		/// <param name="subscribeToThread">If true the user is subscribed to the thread</param>
 		/// <remarks>Leaves the passed in transaction open, so it doesn't commit/rollback, it just performs a set of actions inside the
 		/// passed in transaction.</remarks>
-		internal static void UpdateStatisticsAfterMessageInsert(int threadID, int userID, Transaction transactionToUse, DateTime postingDate, bool addToQueueIfRequired, bool subscribeToThread)
+		internal static void UpdateStatisticsAfterMessageInsert(int threadID, int userID, DataAccessAdapter adapter, DateTime postingDate, bool addToQueueIfRequired, bool subscribeToThread)
 		{
 			// user statistics
-			UserEntity userUpdater = new UserEntity();
-			// set the amountofpostings field to an expression so it will be increased with 1. 
+			var userUpdater = new UserEntity();
+			// set the amountofpostings field to an expression so it will be increased with 1. Update the entity directly in the DB
 			userUpdater.Fields[(int)UserFieldIndex.AmountOfPostings].ExpressionToApply = (UserFields.AmountOfPostings + 1);
-			UserCollection users = new UserCollection();
-			transactionToUse.Add(users);
-			users.UpdateMulti(userUpdater, (UserFields.UserID == userID));	// update directly on the DB. 
+			adapter.UpdateEntitiesDirectly(userUpdater, new RelationPredicateBucket(UserFields.UserID == userID));
 
 			// thread statistics
-			ThreadEntity threadUpdater = new ThreadEntity();
+			var threadUpdater = new ThreadEntity();
 			threadUpdater.ThreadLastPostingDate = postingDate;
 			threadUpdater.MarkedAsDone = false;
-			ThreadCollection threads = new ThreadCollection();
-			transactionToUse.Add(threads);
-			threads.UpdateMulti(threadUpdater, (ThreadFields.ThreadID == threadID));
+			adapter.UpdateEntitiesDirectly(threadUpdater, new RelationPredicateBucket(ThreadFields.ThreadID == threadID));
 
-			// forum statistics. Load the forum from the DB, as we need it later on. Use a fieldcompareset predicate to fetch the forum as we don't know the 
+			// forum statistics. Load the forum from the DB, as we need it later on. Use a nested query to fetch the forum as we don't know the 
 			// forumID as we haven't fetched the thread
-			ForumCollection forums = new ForumCollection();
-			transactionToUse.Add(forums);
-			// use a fieldcompare set predicate to select the forumid based on the thread. This filter is equal to
-			// WHERE ForumID == (SELECT ForumID FROM Thread WHERE ThreadID=@ThreadID)
-			var forumFilter = new FieldCompareSetPredicate(
-								ForumFields.ForumID, ThreadFields.ForumID, SetOperator.Equal, (ThreadFields.ThreadID == threadID));
-			forums.GetMulti(forumFilter);
-			ForumEntity containingForum = null;
-			if(forums.Count>0)
+			var qf = new QueryFactory();
+			var q = qf.Forum
+						.Where(ForumFields.ForumID.In(qf.Create().Select(ThreadFields.ForumID).Where(ThreadFields.ThreadID.Equal(threadID))));
+			var containingForum = adapter.FetchFirst(q);
+			if(containingForum!=null)
 			{
-				// forum found. There's just one.
-				containingForum = forums[0];
 				containingForum.ForumLastPostingDate = postingDate;
-				// save the forum. Just save the collection
-				forums.SaveMulti();
-			}
-
-			if(addToQueueIfRequired)
-			{
-				// If the thread involved isn't in a queue, place it in the default queue of the forum (if applicable)
-				SupportQueueEntity containingQueue = SupportQueueGuiHelper.GetQueueOfThread(threadID, transactionToUse);
-				if((containingQueue == null) && (containingForum != null) && (containingForum.DefaultSupportQueueID.HasValue))
+				// save the forum.
+				adapter.SaveEntity(containingForum, true);
+				if(addToQueueIfRequired && containingForum.DefaultSupportQueueID.HasValue)
 				{
-					// not in a queue, and the forum has a default queue. Add the thread to the queue of the forum
-					SupportQueueManager.AddThreadToQueue(threadID, containingForum.DefaultSupportQueueID.Value, userID, transactionToUse);
+					// If the thread involved isn't in a queue, place it in the default queue of the forum (if applicable)
+					var containingQueue = SupportQueueGuiHelper.GetQueueOfThread(threadID, adapter);
+					if(containingQueue == null)
+					{
+						// not in a queue, and the forum has a default queue. Add the thread to the queue of the forum
+						SupportQueueManager.AddThreadToQueue(threadID, containingForum.DefaultSupportQueueID.Value, userID, adapter);
+					}
 				}
 			}
 
-            //subscribe to thread if indicated
-            if(subscribeToThread)
-            {
-				UserManager.AddThreadToSubscriptions(threadID, userID, transactionToUse);
-            }
+			//subscribe to thread if indicated
+			if(subscribeToThread)
+			{
+				UserManager.AddThreadToSubscriptions(threadID, userID, adapter);
+			}
 		}
 	}
 }

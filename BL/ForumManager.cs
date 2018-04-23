@@ -19,15 +19,11 @@
 */
 using System;
 using System.Data;
-using System.Text;
-using System.Collections;
 
 using SD.LLBLGen.Pro.ORMSupportClasses;
 using SD.HnD.DAL.EntityClasses;
-using SD.HnD.DAL;
-using SD.HnD.DAL.CollectionClasses;
+using SD.HnD.DAL.DatabaseSpecific;
 using SD.HnD.DAL.HelperClasses;
-using SD.HnD.DAL.FactoryClasses;
 
 namespace SD.HnD.BL
 {
@@ -53,31 +49,26 @@ namespace SD.HnD.BL
 		/// <returns>
 		/// ForumID of new forum or 0 if something went wrong.
 		/// </returns>
-		public static int CreateNewForum(int sectionID, string forumName, string forumDescription, bool hasRSSFeed, int? defaultSupportQueueID, 
-				int defaultThreadListInterval, short orderNo, int maxAttachmentSize, short maxNoOfAttachmentsPerMessage, 
-				string newThreadWelcomeText, string newThreadWelcomeTextAsHTML)
+		public static int CreateNewForum(int sectionID, string forumName, string forumDescription, bool hasRSSFeed, int? defaultSupportQueueID, int defaultThreadListInterval, 
+										 short orderNo, int maxAttachmentSize, short maxNoOfAttachmentsPerMessage, string newThreadWelcomeText, string newThreadWelcomeTextAsHTML)
 		{
-			ForumEntity newForum = new ForumEntity();
-			newForum.SectionID = sectionID;
-			newForum.ForumDescription = forumDescription;
-			newForum.ForumName = forumName;
-			newForum.HasRSSFeed = hasRSSFeed;
-			newForum.DefaultSupportQueueID = defaultSupportQueueID;
-			newForum.DefaultThreadListInterval = Convert.ToByte(defaultThreadListInterval);
-			newForum.OrderNo = orderNo;
-			newForum.MaxAttachmentSize = maxAttachmentSize;
-			newForum.MaxNoOfAttachmentsPerMessage = maxNoOfAttachmentsPerMessage;
-			newForum.NewThreadWelcomeText = newThreadWelcomeText;
-			newForum.NewThreadWelcomeTextAsHTML = newThreadWelcomeTextAsHTML;
-			bool result = newForum.Save();
-			if(result)
+			var newForum = new ForumEntity
+						   {
+							   SectionID = sectionID,
+							   ForumDescription = forumDescription,
+							   ForumName = forumName,
+							   HasRSSFeed = hasRSSFeed,
+							   DefaultSupportQueueID = defaultSupportQueueID,
+							   DefaultThreadListInterval = Convert.ToByte(defaultThreadListInterval),
+							   OrderNo = orderNo,
+							   MaxAttachmentSize = maxAttachmentSize,
+							   MaxNoOfAttachmentsPerMessage = maxNoOfAttachmentsPerMessage,
+							   NewThreadWelcomeText = newThreadWelcomeText,
+							   NewThreadWelcomeTextAsHTML = newThreadWelcomeTextAsHTML
+						   };
+			using(var adapter = new DataAccessAdapter())
 			{
-				// succeeded
-				return newForum.ForumID;
-			}
-			else
-			{
-				return 0;
+				return adapter.SaveEntity(newForum) ? newForum.ForumID : 0;
 			}
 		}
 
@@ -98,11 +89,10 @@ namespace SD.HnD.BL
 		/// <param name="newThreadWelcomeText">The new thread welcome text, as shown when a new thread is created. Can be null.</param>
 		/// <param name="newThreadWelcomeTextAsHTML">The new thread welcome text as HTML, is null when newThreadWelcomeText is null or empty.</param>
 		/// <returns>True if succeeded, false otherwise</returns>
-		public static bool ModifyForum(int forumID, int sectionID, string forumName, string forumDescription, bool hasRSSFeed, int? defaultSupportQueueID,
-				int defaultThreadListInterval, short orderNo, int maxAttachmentSize, short maxNoOfAttachmentsPerMessage,
-				string newThreadWelcomeText, string newThreadWelcomeTextAsHTML)
+		public static bool ModifyForum(int forumID, int sectionID, string forumName, string forumDescription, bool hasRSSFeed, int? defaultSupportQueueID, int defaultThreadListInterval, 
+									   short orderNo, int maxAttachmentSize, short maxNoOfAttachmentsPerMessage, string newThreadWelcomeText, string newThreadWelcomeTextAsHTML)
 		{
-			ForumEntity forum = ForumGuiHelper.GetForum(forumID);
+			var forum = ForumGuiHelper.GetForum(forumID);
 			if(forum==null)
 			{
 				// not found
@@ -119,7 +109,10 @@ namespace SD.HnD.BL
 			forum.MaxNoOfAttachmentsPerMessage = maxNoOfAttachmentsPerMessage;
 			forum.NewThreadWelcomeText = newThreadWelcomeText;
 			forum.NewThreadWelcomeTextAsHTML = newThreadWelcomeTextAsHTML;
-			return forum.Save();
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.SaveEntity(forum);
+			}
 		}
 
 
@@ -130,37 +123,28 @@ namespace SD.HnD.BL
 		/// <returns>True if succeeded, false otherwise</returns>
 		public static bool DeleteForum(int forumID)
 		{
-			// first all threads in this forum have to be removed, then this forum should be removed. Do this in one transaction.
-			Transaction trans = new Transaction(IsolationLevel.ReadCommitted, "DeleteForum");
-			try
+			using(var adapter = new DataAccessAdapter())
 			{
-				PredicateExpression forumFilter = new PredicateExpression();
-				forumFilter.Add((ForumFields.ForumID == forumID));
+				// first all threads in this forum have to be removed, then this forum should be removed. Do this in one transaction.
+				adapter.StartTransaction(IsolationLevel.ReadCommitted, "DeleteForum");
+				try
+				{
+					// remove all threads in this forum
+					ThreadManager.DeleteAllThreadsInForum(forumID, adapter);
 
-				// remove all threads in this forum
-                ThreadManager.DeleteAllThreadsInForum(forumID, trans);
-
-				// remove all ForumRoleForumActionRight entities for this forum
-				ForumRoleForumActionRightCollection forumRoleActionRights = new ForumRoleForumActionRightCollection();
-				trans.Add(forumRoleActionRights);
-				forumRoleActionRights.DeleteMulti(ForumRoleForumActionRightFields.ForumID == forumID);
-
-				// remove the forum entity. do this by executing a direct delete statement on the database
-				ForumCollection forums = new ForumCollection();
-				trans.Add(forums);
-				forums.DeleteMulti(forumFilter);
-				trans.Commit();
-				return true;
-			}
-			catch
-			{
-				// exception occured, rollback
-				trans.Rollback();
-				throw;
-			}
-			finally
-			{
-				trans.Dispose();
+					// remove all ForumRoleForumActionRight entities for this forum
+					adapter.DeleteEntitiesDirectly(typeof(ForumRoleForumActionRightEntity), new RelationPredicateBucket(ForumRoleForumActionRightFields.ForumID == forumID));
+					// remove the forum entity. do this by executing a direct delete statement on the database
+					adapter.DeleteEntitiesDirectly(typeof(ForumEntity), new RelationPredicateBucket(ForumFields.ForumID == forumID));
+					adapter.Commit();
+					return true;
+				}
+				catch
+				{
+					// exception occured, rollback
+					adapter.Rollback();
+					throw;
+				}
 			}
 		}
 
@@ -178,69 +162,67 @@ namespace SD.HnD.BL
 		/// <param name="userIDIPAddress">IP address of user calling this method</param>
 		/// <param name="defaultSupportQueueID">The ID of the default support queue for this forum. If not null, the thread created will be
 		/// added to the support queue with the ID specified.</param>
+		/// <param name="subscribeToThread">true, the user will automatically be subscribed to the new thread</param>
 		/// <param name="messageID">The message ID of the new message, which is the start message in the thread.</param>
 		/// <returns>ThreadID if succeeded, 0 if not.</returns>
-		public static int CreateNewThreadInForum(int forumID, int userID, string subject, string messageText, string messageAsHTML, bool isSticky, 
-				string userIDIPAddress, int? defaultSupportQueueID, bool subscribeToThread, out int messageID)
+		public static int CreateNewThreadInForum(int forumID, int userID, string subject, string messageText, string messageAsHTML, bool isSticky, string userIDIPAddress, 
+												 int? defaultSupportQueueID, bool subscribeToThread, out int messageID)
 		{
-			Transaction trans = new Transaction(IsolationLevel.ReadCommitted, "NewThread");
-			try
+			using(var adapter = new DataAccessAdapter())
 			{
-				DateTime postDate = DateTime.Now;
-
-				ThreadEntity newThread = new ThreadEntity();
-				newThread.ForumID = forumID;
-				newThread.IsClosed = false;
-				newThread.IsSticky = isSticky;
-				newThread.StartedByUserID = userID;
-				newThread.Subject = subject;
-				newThread.ThreadLastPostingDate = postDate;
-
-				if(defaultSupportQueueID.HasValue)
+				adapter.StartTransaction(IsolationLevel.ReadCommitted, "NewThread");
+				try
 				{
-					// a support queue has been specified as the default support queue for this forum. Add the new thread to this support queue.
-					SupportQueueThreadEntity supportQueueThread = new SupportQueueThreadEntity();
-					supportQueueThread.QueueID = defaultSupportQueueID.Value;
-					supportQueueThread.PlacedInQueueByUserID = userID;
-					supportQueueThread.PlacedInQueueOn = DateTime.Now;
-					// assign the Thread property to the newly created thread entity, so this supportqueuethreadentity will be part of the graph
-					// of objects which will be saved.
-					supportQueueThread.Thread = newThread;
+					var postingDate = DateTime.Now;
+					var newThread = new ThreadEntity
+									{
+										ForumID = forumID,
+										IsClosed = false,
+										IsSticky = isSticky,
+										StartedByUserID = userID,
+										Subject = subject,
+										ThreadLastPostingDate = postingDate
+									};
+
+					if(defaultSupportQueueID.HasValue)
+					{
+						// a support queue has been specified as the default support queue for this forum. Add the new thread to this support queue.
+						var supportQueueThread = new SupportQueueThreadEntity
+												 {
+													 QueueID = defaultSupportQueueID.Value,
+													 PlacedInQueueByUserID = userID,
+													 PlacedInQueueOn = DateTime.Now,
+													 // assign the Thread property to the newly created thread entity, so this supportqueuethreadentity will be part of the graph
+													 // of objects which will be saved.
+													 Thread = newThread
+												 };
+					}
+
+					var newMessage = new MessageEntity
+									 {
+										 MessageText = messageText,
+										 MessageTextAsHTML = messageAsHTML,
+										 PostedByUserID = userID,
+										 PostingDate = postingDate,
+										 PostedFromIP = userIDIPAddress,
+										 Thread = newThread
+									 };
+					// save the complete graph
+					adapter.SaveEntity(newMessage);
+					messageID = newMessage.MessageID;
+
+					// update thread statistics, this is the task for the message manager, and we pass the transaction object so the actions will run in
+					// the same transaction.
+					MessageManager.UpdateStatisticsAfterMessageInsert(newMessage.ThreadID, userID, adapter, postingDate, false, subscribeToThread);
+
+					adapter.Commit();
+					return newThread.ThreadID;
 				}
-				
-				DateTime postingDate = DateTime.Now;
-				MessageEntity newMessage = new MessageEntity();
-				newMessage.MessageText = messageText;
-				newMessage.MessageTextAsHTML = messageAsHTML;
-				newMessage.PostedByUserID = userID;
-				newMessage.PostingDate = postingDate;
-				newMessage.PostedFromIP = userIDIPAddress;
-				newMessage.Thread = newThread;
-
-				// add the newMessage entity to the transaction object. All entities saved recursively will be added automatically
-				trans.Add(newMessage);
-				
-				// save the complete graph
-				newMessage.Save(true);
-
-				messageID = newMessage.MessageID;
-				int threadID = newMessage.ThreadID;
-
-				// update thread statistics, this is the task for the message manager, and we pass the transaction object so the actions will run in
-				// the same transaction.
-				MessageManager.UpdateStatisticsAfterMessageInsert(threadID, userID, trans, postingDate, false, subscribeToThread);
-
-				trans.Commit();
-				return newThread.ThreadID;
-			}
-			catch(Exception)
-			{
-				trans.Rollback();
-				throw;
-			}
-			finally
-			{
-				trans.Dispose();
+				catch(Exception)
+				{
+					adapter.Rollback();
+					throw;
+				}
 			}
 		}
 	}

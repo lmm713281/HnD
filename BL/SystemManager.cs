@@ -18,7 +18,7 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 using System;
-using System.Data;
+using SD.HnD.DAL.DatabaseSpecific;
 using SD.HnD.DAL.EntityClasses;
 
 namespace SD.HnD.BL
@@ -45,23 +45,29 @@ namespace SD.HnD.BL
 		/// <returns>
 		/// true if save was succeeded, false otherwise
 		/// </returns>
-		public static bool StoreNewSystemSettings(int id, int newDefaultUserRoleNewUsers, int newAnonymousRole, int newUserTitleNewUsers, 
-				short hoursThresholdForActiveThreads, short pageSizeSearchResults, short minimalNumberOfThreadsToFetch, 
-				short minimalNumberOfNonStickyVisibleThreads, bool sendReplyNotifications)
+		public static bool StoreNewSystemSettings(int id, int newDefaultUserRoleNewUsers, int newAnonymousRole, int newUserTitleNewUsers, short hoursThresholdForActiveThreads, 
+												  short pageSizeSearchResults, short minimalNumberOfThreadsToFetch, short minimalNumberOfNonStickyVisibleThreads, bool sendReplyNotifications)
 		{
-			// fetch the existing system data entity. 
-			SystemDataEntity systemData = new SystemDataEntity(id);
+			using(var adapter = new DataAccessAdapter())
+			{
+				// fetch the existing system data entity. 
+				var systemData = new SystemDataEntity(id);
+				if(!adapter.FetchEntity(systemData))
+				{
+					throw new InvalidOperationException("No system settings object found!");
+				}
 
-			// update its parameters. 
-			systemData.DefaultRoleNewUser = newDefaultUserRoleNewUsers;
-			systemData.AnonymousRole = newAnonymousRole;
-			systemData.DefaultUserTitleNewUser = newUserTitleNewUsers;
-			systemData.HoursThresholdForActiveThreads = hoursThresholdForActiveThreads;
-			systemData.PageSizeSearchResults = pageSizeSearchResults;
-			systemData.MinNumberOfNonStickyVisibleThreads = minimalNumberOfNonStickyVisibleThreads;
-			systemData.MinNumberOfThreadsToFetch = minimalNumberOfThreadsToFetch;
-			systemData.SendReplyNotifications = sendReplyNotifications;
-			return systemData.Save();
+				// update its parameters. 
+				systemData.DefaultRoleNewUser = newDefaultUserRoleNewUsers;
+				systemData.AnonymousRole = newAnonymousRole;
+				systemData.DefaultUserTitleNewUser = newUserTitleNewUsers;
+				systemData.HoursThresholdForActiveThreads = hoursThresholdForActiveThreads;
+				systemData.PageSizeSearchResults = pageSizeSearchResults;
+				systemData.MinNumberOfNonStickyVisibleThreads = minimalNumberOfNonStickyVisibleThreads;
+				systemData.MinNumberOfThreadsToFetch = minimalNumberOfThreadsToFetch;
+				systemData.SendReplyNotifications = sendReplyNotifications;
+				return adapter.SaveEntity(systemData);
+			}
 		}
 	}
 }

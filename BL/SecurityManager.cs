@@ -19,11 +19,8 @@
 */
 using System;
 using System.Data;
-using System.Collections;
-using System.Security.Cryptography;
 
 using SD.HnD.Utility;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.DAL.EntityClasses;
 using SD.HnD.DAL;
 using SD.HnD.DAL.HelperClasses;
@@ -31,6 +28,12 @@ using SD.HnD.DAL.HelperClasses;
 using SD.LLBLGen.Pro.QuerySpec;
 using SD.LLBLGen.Pro.ORMSupportClasses;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mail;
+using SD.HnD.DAL.DatabaseSpecific;
+using SD.HnD.DAL.FactoryClasses;
+using SD.HnD.DAL.Linq;
+using SD.LLBLGen.Pro.QuerySpec.Adapter;
 
 namespace SD.HnD.BL
 {
@@ -67,11 +70,15 @@ namespace SD.HnD.BL
 		/// <returns>true if the save was successful, false otherwise</returns>
 		public static bool AuditLogin(int userID)
 		{
-			AuditDataCoreEntity toLog = new AuditDataCoreEntity();
-			toLog.AuditActionID = (int)AuditActions.AuditLogin;
-			toLog.UserID = userID;
-			toLog.AuditedOn = DateTime.Now;
-			return toLog.Save();
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.SaveEntity(new AuditDataCoreEntity
+										  {
+											  AuditActionID = (int)AuditActions.AuditLogin,
+											  UserID = userID,
+											  AuditedOn = DateTime.Now
+										  });
+			}
 		}
 
 		
@@ -83,12 +90,16 @@ namespace SD.HnD.BL
 		/// <returns>true if the save was successful, false otherwise</returns>
 		public static bool AuditNewThread(int userID, int threadID)
 		{
-			AuditDataThreadRelatedEntity toLog = new AuditDataThreadRelatedEntity();
-			toLog.AuditActionID = (int)AuditActions.AuditNewThread;
-			toLog.UserID = userID;
-			toLog.AuditedOn = DateTime.Now;
-			toLog.ThreadID = threadID;
-			return toLog.Save();
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.SaveEntity(new AuditDataThreadRelatedEntity
+										  {
+											  AuditActionID = (int)AuditActions.AuditNewThread,
+											  UserID = userID,
+											  AuditedOn = DateTime.Now,
+											  ThreadID = threadID
+										  });
+			}
 		}
 
 
@@ -100,12 +111,16 @@ namespace SD.HnD.BL
 		/// <returns>true if the save was successful, false otherwise</returns>
 		public static bool AuditEditMemo(int userID, int threadID)
 		{
-			AuditDataThreadRelatedEntity toLog = new AuditDataThreadRelatedEntity();
-			toLog.AuditActionID = (int)AuditActions.AuditEditMemo;
-			toLog.UserID = userID;
-			toLog.AuditedOn = DateTime.Now;
-			toLog.ThreadID = threadID;
-			return toLog.Save();
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.SaveEntity(new AuditDataThreadRelatedEntity
+										  {
+											  AuditActionID = (int)AuditActions.AuditEditMemo,
+											  UserID = userID,
+											  AuditedOn = DateTime.Now,
+											  ThreadID = threadID
+										  });
+			}
 		}
 
 
@@ -116,18 +131,21 @@ namespace SD.HnD.BL
 		/// <param name="attachmentID">The attachment ID.</param>
 		public static bool AuditApproveAttachment(int userID, int attachmentID)
 		{
-			AuditDataMessageRelatedEntity toLog = new AuditDataMessageRelatedEntity();
-
-			AttachmentCollection collection = new AttachmentCollection();
-			// use a scalar query to obtain the message id so we don't have to pull it completely in memory. An attachment can be big in size so we don't want to 
-			// read the entity to just read the messageid. We could use excluding fields to avoid the actual attachment data, but this query is really simple.
-			// this query will return 1 value directly from the DB, so it won't read all attachments first into memory.
-			int messageID = (int)collection.GetScalar(AttachmentFieldIndex.MessageID, null, AggregateFunction.None, (AttachmentFields.AttachmentID==attachmentID));
-			toLog.AuditActionID = (int)AuditActions.AuditApproveAttachment;
-			toLog.UserID = userID;
-			toLog.MessageID = messageID;
-			toLog.AuditedOn = DateTime.Now;
-			return toLog.Save();
+			using(var adapter = new DataAccessAdapter())
+			{
+				// use a scalar query to obtain the message id so we don't have to pull it completely in memory. An attachment can be big in size so we don't want to 
+				// read the entity to just read the messageid. We could use excluding fields to avoid the actual attachment data, but this query is really simple.
+				// this query will return 1 value directly from the DB, so it won't read all attachments first into memory.
+				int messageID = adapter.FetchScalar<int>(new QueryFactory().Create().Select(AttachmentFields.MessageID).Where(AttachmentFields.AttachmentID == attachmentID));
+				var toLog = new AuditDataMessageRelatedEntity
+							{
+								AuditActionID = (int)AuditActions.AuditApproveAttachment,
+								UserID = userID,
+								MessageID = messageID,
+								AuditedOn = DateTime.Now
+							};
+				return adapter.SaveEntity(toLog);
+			}
 		}
 
 
@@ -139,12 +157,16 @@ namespace SD.HnD.BL
 		/// <returns>true if the save was successful, false otherwise</returns>
 		public static bool AuditNewMessage(int userID, int messageID)
 		{
-			AuditDataMessageRelatedEntity toLog = new AuditDataMessageRelatedEntity();
-			toLog.AuditActionID = (int)AuditActions.AuditNewMessage;
-			toLog.UserID = userID;
-			toLog.AuditedOn = DateTime.Now;
-			toLog.MessageID = messageID;
-			return toLog.Save();
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.SaveEntity(new AuditDataMessageRelatedEntity
+										  {
+											  AuditActionID = (int)AuditActions.AuditNewMessage,
+											  UserID = userID,
+											  AuditedOn = DateTime.Now,
+											  MessageID = messageID
+										  });
+			}
 		}
 
 
@@ -156,12 +178,16 @@ namespace SD.HnD.BL
 		/// <returns></returns>
 		public static bool AuditAlteredMessage(int userID, int messageID)
 		{
-			AuditDataMessageRelatedEntity toLog = new AuditDataMessageRelatedEntity();
-			toLog.AuditActionID = (int)AuditActions.AuditAlteredMessage;
-			toLog.UserID = userID;
-			toLog.AuditedOn = DateTime.Now;
-			toLog.MessageID = messageID;
-			return toLog.Save();
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.SaveEntity(new AuditDataMessageRelatedEntity
+										  {
+											  AuditActionID = (int)AuditActions.AuditAlteredMessage,
+											  UserID = userID,
+											  AuditedOn = DateTime.Now,
+											  MessageID = messageID
+										  });
+			}
 		}
 
 
@@ -171,10 +197,13 @@ namespace SD.HnD.BL
 		/// PerformWork event is raised and this UoW contains the changes to persist. This routine persists these changes. 
 		/// </summary>
 		/// <param name="uow">The unitofwork object which contains 1 or more changes (with standard .NET controls, this is 1) to persist.</param>
-		public static void PersistIPBanUnitOfWork(UnitOfWork uow)
+		public static void PersistIPBanUnitOfWork(UnitOfWork2 uow)
 		{
 			// pass a new transaction to the commit routine and auto-commit this transaction when the transaction is complete.
-			uow.Commit(new Transaction(IsolationLevel.ReadCommitted, "PersistIPBans"), true);
+			using(var adapter = new DataAccessAdapter())
+			{
+				uow.Commit(adapter, autoCommit: true);
+			}
 		}
 
 
@@ -183,7 +212,7 @@ namespace SD.HnD.BL
 		/// caught and 0 is returned in that case.
 		/// </summary>
 		/// <param name="roleDescription">Description to store</param>
-		/// <returns>new RoleID if succeeded. If the description was already available, 0 is returned</returns></returns>
+		/// <returns>new RoleID if succeeded. If the description was already available, 0 is returned</returns>
 		public static int CreateNewRole(string roleDescription)
 		{
 			if(CheckIfRoleDescriptionIsPresent(roleDescription))
@@ -191,18 +220,11 @@ namespace SD.HnD.BL
 				// is already present
 				return 0;
 			}
-
-			RoleEntity newRole = new RoleEntity();
-			newRole.RoleDescription = roleDescription;
-
-			int toReturn = 0;
-			bool result = newRole.Save();
-			if(result)
+			using(var adapter = new DataAccessAdapter())
 			{
-				// save was succesful, read back the ID that was just created so we can return that to the caller. 
-				toReturn = newRole.RoleID;
+				var newRole = new RoleEntity {RoleDescription = roleDescription};
+				return adapter.SaveEntity(newRole) ? newRole.RoleID : 0;
 			}
-			return toReturn;
 		}
 
 
@@ -217,67 +239,58 @@ namespace SD.HnD.BL
 		/// <returns>true if succeeded, false otherwise</returns>
 		public static bool ModifyRole(List<int> actionRightIDs, int roleID, string roleDescription)
 		{
-			// read the existing role entity from the database. 
-			RoleEntity roleToModify = new RoleEntity(roleID);
-			if(roleToModify.IsNew)
+			var roleActionRights = new EntityCollection<RoleSystemActionRightEntity>();
+			// add new role-systemactionright entities which we'll save to the database after that
+			foreach(int actionRightID in actionRightIDs)
 			{
-				// not found
-				return false;
+				roleActionRights.Add(new RoleSystemActionRightEntity
+									 {
+										 ActionRightID = actionRightID,
+										 RoleID = roleID
+									 });
 			}
 
-			// check if the description is different. If so, we've to check if the new roledescription is already present. If so, we'll
-			// abort the save
-			if(roleToModify.RoleDescription != roleDescription)
+			using(var adapter = new DataAccessAdapter())
 			{
-				if(CheckIfRoleDescriptionIsPresent(roleDescription))
+				// read the existing role entity from the database. 
+				var roleToModify = new RoleEntity(roleID);
+				if(!adapter.FetchEntity(roleToModify))
 				{
-					// new description, is already present, fail
+					// not found
 					return false;
 				}
-			}
 
-			// all set. We're going to delete all Role - SystemAction Rights combinations first, as we're going to re-insert them later on. 
-			// We'll use a transaction to be able to roll back all our changes if something fails. 
-			Transaction trans = new Transaction(IsolationLevel.ReadCommitted, "ModifyRole");
-			try
-			{
-				RoleSystemActionRightCollection roleActionRights = new RoleSystemActionRightCollection();
-				// add this collection to the transaction so all actions executed through this collection will be inside the transaction
-				trans.Add(roleActionRights);
-				// delete all role-systemactionright combinations directly from the database, by issuing a direct delete on the database, using a filter
-				// on roleid
-				roleActionRights.DeleteMulti(RoleSystemActionRightFields.RoleID == roleID);
-
-				// add new role-systemactionright entities which we'll save to the database after that
-				foreach(int actionRightID in actionRightIDs)
+				// check if the description is different. If so, we've to check if the new roledescription is already present. If so, we'll
+				// abort the save
+				if(roleToModify.RoleDescription != roleDescription)
 				{
-					RoleSystemActionRightEntity toAdd = new RoleSystemActionRightEntity();
-					toAdd.ActionRightID = actionRightID;
-					toAdd.RoleID = roleID;
-					roleActionRights.Add(toAdd);
+					if(SecurityManager.CheckIfRoleDescriptionIsPresent(roleDescription))
+					{
+						// new description, is already present, fail
+						return false;
+					}
 				}
-				// save the new entities to the database
-				roleActionRights.SaveMulti();
 
-				// we'll now save the role and the role description, if it's changed. Otherwise the save action will be a no-op. 
-				// add it to the transaction
-				trans.Add(roleToModify);
-				roleToModify.RoleDescription = roleDescription;
-				roleToModify.Save();
-
-				// all done, commit the transaction
-				trans.Commit();
-				return true;
-			}
-			catch
-			{
-				// failed, roll back transaction.
-				trans.Rollback();
-				throw;
-			}
-			finally
-			{
-				trans.Dispose();
+				// all set. We're going to delete all Role - SystemAction Rights combinations first, as we're going to re-insert them later on. 
+				// We'll use a transaction to be able to roll back all our changes if something fails. 
+				adapter.StartTransaction(IsolationLevel.ReadCommitted, "ModifyRole");
+				try
+				{
+					adapter.DeleteEntitiesDirectly(typeof(RoleSystemActionRightEntity), new RelationPredicateBucket(RoleSystemActionRightFields.RoleID == roleID));
+					adapter.SaveEntityCollection(roleActionRights);
+					// we'll now save the role and the role description, if it's changed. Otherwise the save action will be a no-op. 
+					roleToModify.RoleDescription = roleDescription;
+					adapter.SaveEntity(roleToModify);
+					// all done, commit the transaction
+					adapter.Commit();
+					return true;
+				}
+				catch
+				{
+					// failed, roll back transaction.
+					adapter.Rollback();
+					throw;
+				}
 			}
 		}
 
@@ -290,42 +303,36 @@ namespace SD.HnD.BL
 		/// <returns>true if the save action succeeded, false otherwise</returns>
 		public static bool SaveAuditActionsForRole(List<int> auditActionIDs, int roleID)
 		{
-			RoleAuditActionCollection roleAuditActions = new RoleAuditActionCollection();
-			Transaction trans = new Transaction(IsolationLevel.ReadCommitted, "SaveAuditActionsForRole");
-			
-			// add this collection to the transaction so all actions executed through this collection will be inside the transaction
-			trans.Add(roleAuditActions);
-
-			try
+			var roleAuditActions = new EntityCollection<RoleAuditActionEntity>();
+			foreach(int auditActionID in auditActionIDs)
 			{
-				// first remove the existing rows for the role
-				roleAuditActions.DeleteMulti((RoleAuditActionFields.RoleID == roleID));
-
-				// THEN add new ones to the same collection. 
-				foreach(int auditActionID in auditActionIDs)
+				roleAuditActions.Add(new RoleAuditActionEntity
+									 {
+										 AuditActionID = auditActionID,
+										 RoleID = roleID
+									 });
+			}
+			using(var adapter = new DataAccessAdapter())
+			{ 
+				adapter.StartTransaction(IsolationLevel.ReadCommitted, "SaveAuditActionsForRole");
+				try
 				{
-					RoleAuditActionEntity newRoleAuditAction = new RoleAuditActionEntity();
-					newRoleAuditAction.AuditActionID = auditActionID;
-					newRoleAuditAction.RoleID = roleID;
-					roleAuditActions.Add(newRoleAuditAction);
+					// first delete the current entities directly from the db
+					adapter.DeleteEntitiesDirectly(typeof(RoleAuditActionEntity), new RelationPredicateBucket(RoleAuditActionFields.RoleID == roleID));
+
+					// THEN save all new entities
+					adapter.SaveEntityCollection(roleAuditActions);
+
+					// succeeded, commit transaction
+					adapter.Commit();
+					return true;
 				}
-
-				// save all new entities
-				roleAuditActions.SaveMulti();
-
-				// succeeded, commit transaction
-				trans.Commit();
-				return true;
-			}
-			catch
-			{
-				// failed, rollback transaction
-				trans.Rollback();
-				throw;
-			}
-			finally
-			{
-				trans.Dispose();
+				catch
+				{
+					// failed, rollback transaction
+					adapter.Rollback();
+					throw;
+				}
 			}
 		}
 
@@ -340,42 +347,36 @@ namespace SD.HnD.BL
 		/// <returns>true if succeeded, false otherwise</returns>
 		public static bool SaveForumActionRightsForForumRole(List<int> actionRightIDs, int roleID, int forumID)
 		{
-			ForumRoleForumActionRightCollection forumRightsPerRole = new ForumRoleForumActionRightCollection();
-			Transaction trans = new Transaction(IsolationLevel.ReadCommitted, "SaveForumActionRights");
-
-			// add this collection to the transaction so all actions executed through this collection will be inside the transaction
-			trans.Add(forumRightsPerRole);
-			try
+			var forumRightsPerRole = new EntityCollection<ForumRoleForumActionRightEntity>();
+			foreach(int actionRightID in actionRightIDs)
 			{
-				// first remove the existing rows for the role
-                forumRightsPerRole.DeleteMulti((ForumRoleForumActionRightFields.RoleID == roleID).And(ForumRoleForumActionRightFields.ForumID == forumID));
-
-				// THEN add new ones
-				foreach(int actionRightID in actionRightIDs)
+				forumRightsPerRole.Add(new ForumRoleForumActionRightEntity
+									   {
+										   ActionRightID = actionRightID,
+										   ForumID = forumID,
+										   RoleID = roleID
+									   });
+			}
+			using(var adapter = new DataAccessAdapter())
+			{ 
+				adapter.StartTransaction(IsolationLevel.ReadCommitted, "SaveForumActionRights");
+				try
 				{
-					ForumRoleForumActionRightEntity newForumRightPerRole = new ForumRoleForumActionRightEntity();
-					newForumRightPerRole.ActionRightID = actionRightID;
-					newForumRightPerRole.ForumID = forumID;
-					newForumRightPerRole.RoleID = roleID;
-					forumRightsPerRole.Add(newForumRightPerRole);
+					// first remove the existing rows for the role. Do this by a query directly on the database.
+					adapter.DeleteEntitiesDirectly(typeof(ForumRoleForumActionRightEntity), 
+												   new RelationPredicateBucket((ForumRoleForumActionRightFields.RoleID == roleID).And(ForumRoleForumActionRightFields.ForumID == forumID)));
+					// then save the new entities
+					adapter.SaveEntityCollection(forumRightsPerRole);
+					// all done, commit transaction
+					adapter.Commit();
+					return true;
 				}
-
-				// save the new entities
-				forumRightsPerRole.SaveMulti();
-
-				// all done, commit transaction
-				trans.Commit();
-				return true;
-			}
-			catch
-			{
-				// failed, rollback transaction
-				trans.Rollback();
-				throw;
-			}
-			finally
-			{
-				trans.Dispose();
+				catch
+				{
+					// failed, rollback transaction
+					adapter.Rollback();
+					throw;
+				}
 			}
 		}
 		
@@ -393,18 +394,19 @@ namespace SD.HnD.BL
 				return true;
 			}
 
-			RoleUserCollection roleUsers = new RoleUserCollection();
-			// for each userid in the list, add a new entity to the collection
+			var roleUsers = new EntityCollection<RoleUserEntity>();
 			foreach(int userID in userIDsToAdd)
-			{ 
-				RoleUserEntity newRoleUser = new RoleUserEntity();
-				newRoleUser.UserID = userID;
-				newRoleUser.RoleID = roleID;
-				roleUsers.Add(newRoleUser);
+			{
+				roleUsers.Add(new RoleUserEntity
+							  {
+								  UserID = userID,
+								  RoleID = roleID
+							  });
 			}
-			
-			// save the new role-user combinations
-			return (roleUsers.SaveMulti() > 0);
+			using(var adapter = new DataAccessAdapter())
+			{
+				return adapter.SaveEntityCollection(roleUsers) > 0;
+			}
 		}
 
 
@@ -421,28 +423,12 @@ namespace SD.HnD.BL
 				return true;
 			}
 
-			// we'll delete all role-user combinations for the users in the given range plus for the given role. 
-			// if there's just one user, we'll use an optimization, as the range query will result in an IN (param, param... ) query, 
-			// and an field IN (param) query, is much slower compared to field = param, at least on Sqlserver.
-
-			// produce the filter which will be used to filter out the entities to delete. 
-			PredicateExpression filter = new PredicateExpression();
-			if(userIDsToRemove.Count == 1)
+			// we'll delete all role-user combinations for the users in the given range plus for the given role. We'll do that with a query directly onto the DB.
+			using(var adapter = new DataAccessAdapter())
 			{
-				// use compare value predicate instead
-				filter.Add((RoleUserFields.UserID == userIDsToRemove[0]));
+				return adapter.DeleteEntitiesDirectly(typeof(RoleUserEntity), 
+													  new RelationPredicateBucket(RoleUserFields.UserID.In(userIDsToRemove).And(RoleUserFields.RoleID.Equal(roleID)))) > 0;
 			}
-			else
-			{
-				// add a range filter
-				filter.Add((RoleUserFields.UserID == userIDsToRemove));
-			}
-			// add the filter for the role as with AND.
-			filter.AddWithAnd((RoleUserFields.RoleID == roleID));
-
-			// delete the entities directly from the database. As this gives a single DELETE statement, we don't have to start a transaction manually.
-			RoleUserCollection roleUsers = new RoleUserCollection();
-			return (roleUsers.DeleteMulti(filter) > 0);
 		}
 
 
@@ -453,52 +439,37 @@ namespace SD.HnD.BL
 		/// <returns>true if succeeded, false otherwise</returns>
 		public static bool DeleteRole(int roleID)
 		{
-			RoleEntity toDelete = SecurityGuiHelper.GetRole(roleID);
+			var toDelete = SecurityGuiHelper.GetRole(roleID);
 			if(toDelete == null)
 			{
 				// not found
 				return false;
 			}
 
-			Transaction trans = new Transaction(IsolationLevel.ReadCommitted, "DeleteRole");
-
-			try
-			{
-				// remove the role - forum - action right entities
-				ForumRoleForumActionRightCollection forumRoleActionRights = new ForumRoleForumActionRightCollection();
-				trans.Add(forumRoleActionRights);
-				forumRoleActionRights.DeleteMulti(ForumRoleForumActionRightFields.RoleID == roleID);
-
-				// Remove role-audit action entities
-				RoleAuditActionCollection roleAuditActions = new RoleAuditActionCollection();
-				trans.Add(roleAuditActions);
-				roleAuditActions.DeleteMulti(RoleAuditActionFields.RoleID == roleID);
-
-				// remove Role - systemright entities
-				RoleSystemActionRightCollection roleSystemRights = new RoleSystemActionRightCollection();
-				trans.Add(roleSystemRights);
-				roleSystemRights.DeleteMulti(RoleSystemActionRightFields.RoleID == roleID);
-
-				// remove Role - user entities
-				RoleUserCollection roleUsers = new RoleUserCollection();
-				trans.Add(roleUsers);
-				roleUsers.DeleteMulti(RoleUserFields.RoleID == roleID);
-
-				// delete the actual role
-				trans.Add(toDelete);
-				toDelete.Delete();
-				trans.Commit();
-				return true;
-			}
-			catch
-			{
-				// error occured, rollback
-				trans.Rollback();
-				throw;
-			}
-			finally
-			{
-				trans.Dispose();
+			using(var adapter = new DataAccessAdapter())
+			{ 
+				adapter.StartTransaction(IsolationLevel.ReadCommitted, "DeleteRole");
+				try
+				{
+					// remove the role - forum - action right entities
+					adapter.DeleteEntitiesDirectly(typeof(ForumRoleForumActionRightEntity), new RelationPredicateBucket(ForumRoleForumActionRightFields.RoleID == roleID));
+					// Remove role-audit action entities
+					adapter.DeleteEntitiesDirectly(typeof(RoleAuditActionEntity), new RelationPredicateBucket(RoleAuditActionFields.RoleID == roleID));
+					// remove Role - systemright entities
+					adapter.DeleteEntitiesDirectly(typeof(RoleSystemActionRightEntity), new RelationPredicateBucket(RoleSystemActionRightFields.RoleID == roleID));
+					// remove Role - user entities
+					adapter.DeleteEntitiesDirectly(typeof(RoleUserEntity), new RelationPredicateBucket(RoleUserFields.RoleID == roleID));
+					// delete the actual role
+					adapter.DeleteEntity(toDelete);
+					adapter.Commit();
+					return true;
+				}
+				catch
+				{
+					// error occured, rollback
+					adapter.Rollback();
+					throw;
+				}
 			}
 		}
 
@@ -511,9 +482,10 @@ namespace SD.HnD.BL
 		/// <returns>true if user exists, false otherwise.</returns>
 		public static bool DoesUserExist(string nickName)
 		{
-			UserEntity user = new UserEntity();
-			// fetch the user using the unique constraint functionality.
-			return user.FetchUsingUCNickName(nickName);
+			using(var adapter = new DataAccessAdapter())
+			{
+				return new LinqMetaData(adapter).User.Any(u=>u.NickName == nickName);
+			}
 		}
 
 
@@ -524,9 +496,10 @@ namespace SD.HnD.BL
 		/// <returns>true if user exists, false otherwise. </returns>
 		public static bool DoesUserExist(int userID)
 		{
-			UserEntity user = new UserEntity(userID);
-			// return true if the user entity was fetched succesfully, i.e.: the entity isn't new anymore.
-			return (!user.IsNew);
+			using(var adapter = new DataAccessAdapter())
+			{
+				return new LinqMetaData(adapter).User.Any(u => u.UserID == userID);
+			}
 		}
 
 
@@ -539,9 +512,13 @@ namespace SD.HnD.BL
         /// <returns>true if user exists, false otherwise.</returns>
         public static bool DoesUserExist(string nickName, out UserEntity user)
         {
-            user = new UserEntity();
-            // fetch the user using the unique constraint functionality.
-            return user.FetchUsingUCNickName(nickName);
+			var qf = new QueryFactory();
+			var q = qf.User.Where(UserFields.NickName.Equal(nickName));
+			using(var adapter = new DataAccessAdapter())
+			{
+				user = adapter.FetchFirst(q) ?? new UserEntity();
+				return user.Fields.State==EntityState.Fetched;
+			}
         }
 
 		
@@ -555,40 +532,38 @@ namespace SD.HnD.BL
 		/// AuthenticateResult.IsBanned if the user is banned. </returns>
 		public static AuthenticateResult AuthenticateUser(string nickName, string password, out UserEntity user)
 		{
+			var qf = new QueryFactory();
 			// fetch the Roles related to the user when fetching the user, using a prefetchPath object.
-            PrefetchPath prefetchPath = new PrefetchPath((int)EntityType.UserEntity);
-            prefetchPath.Add(UserEntity.PrefetchPathRoles);
-
-			// fetch the user data using the nickname which has a unique constraint
-            user = new UserEntity();
-            bool fetchResult = user.FetchUsingUCNickName(nickName, prefetchPath);
-
-			if(!fetchResult)
+			var q = qf.User.Where(UserFields.NickName.Equal(nickName))
+					  .WithPath(UserEntity.PrefetchPathRoles);
+			using(var adapter = new DataAccessAdapter())
 			{
-				// not found. Simply return that the user has specified a wrong username/password combination. 
-				return AuthenticateResult.WrongUsernamePassword;
-			}
+				user = adapter.FetchFirst(q) ?? new UserEntity();
+				bool fetchResult = user.Fields.State == EntityState.Fetched;
 
-			// user was found, check if the user can be authenticated and has specified the correct password.
-			if(user.IsBanned)
-			{
-				// user is banned. We'll report that to the caller
-                return AuthenticateResult.IsBanned;
-			}
-			else
-			{
+				if(!fetchResult)
+				{
+					// not found. Simply return that the user has specified a wrong username/password combination. 
+					return AuthenticateResult.WrongUsernamePassword;
+				}
+
+				// user was found, check if the user can be authenticated and has specified the correct password.
+				if(user.IsBanned)
+				{
+					// user is banned. We'll report that to the caller
+					return AuthenticateResult.IsBanned;
+				}
+
+#warning ADJUST FOR #4
 				// check password and UserID. We disallow the user with id 0 to login as that's the anonymous coward ID for a user not logged in.
 				string md5HashedPassword = HnDGeneralUtils.CreateMD5HashedBase64String(password);
-				if((md5HashedPassword == user.Password)&&(user.UserID != Globals.UserIDToDenyLogin))
+				if((md5HashedPassword == user.Password) && (user.UserID != Globals.UserIDToDenyLogin))
 				{
 					// correct username/password combination
-                    return AuthenticateResult.AllOk;
+					return AuthenticateResult.AllOk;
 				}
-				else
-				{
-					// something was wrong, report wrong authentication combination
-                    return AuthenticateResult.WrongUsernamePassword;
-				}
+				// something was wrong, report wrong authentication combination
+				return AuthenticateResult.WrongUsernamePassword;
 			}
 		}
 
@@ -600,11 +575,10 @@ namespace SD.HnD.BL
 		/// <returns>true if the role description is already present, otherwise false.</returns>
 		private static bool CheckIfRoleDescriptionIsPresent(string roleDescription)
 		{
-			// check if the role description is already available. Do that by performing a GetDbCount query on the role entities using a filter for the description.
-			RoleCollection roles = new RoleCollection();
-			// perform the getdbcount query.
-			int count = roles.GetDbCount((RoleFields.RoleDescription == roleDescription));
-			return (count > 0);
+			using(var adapter = new DataAccessAdapter())
+			{
+				return new LinqMetaData(adapter).Role.Any(r=>r.RoleDescription == roleDescription);
+			}
 		}
 	}
 }
