@@ -4,8 +4,8 @@
 <tr>
 	<td class="SmallFontSmallest" align="middle">
 		<hr class="FooterHR" style="text-align:center;" width="40%" size="1">
-		Powered by <a href="http://www.llblgen.com/HnD" target="_blank">HnD</a> &copy;2002-2007 <a href="http://www.sd.nl/" target="_blank">Solutions Design</a><br>
-		<a href="http://www.llblgen.com/HnD" target="_blank">HnD</a> uses <a href="http://www.llblgen.com" target="_blank">LLBLGen Pro</a><br />
+		Powered by <a href="https://github.com/SolutionsDesign/HnD" target="_blank">HnD</a> &copy;2002-<%=DateTime.Now.Year %> <a href="https://www.sd.nl/" target="_blank">Solutions Design bv</a><br>
+		<a href="https://github.com/SolutionsDesign/HnD" target="_blank">HnD</a> uses <a href="https://www.llblgen.com" target="_blank">LLBLGen Pro</a><br />
 		<br>
 		Version: <%=Globals.Version%>.<%=Globals.Build%> <%=Globals.ReleaseType%>.
 		<br><br>

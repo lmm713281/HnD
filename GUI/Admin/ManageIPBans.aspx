@@ -23,7 +23,7 @@
 	</td>
 </tr>
 </table>
-	<llblgenpro:LLBLGenProDataSource ID="_ipBanDS" runat="server" DataContainerType="EntityCollection" EntityCollectionTypeName="SD.HnD.DAL.CollectionClasses.IPBanCollection, SD.HnD.DAL" EnablePaging="True" LivePersistence="False" OnPerformGetDbCount="_ipBanDS_PerformGetDbCount" OnPerformSelect="_ipBanDS_PerformSelect" OnPerformWork="_ipBanDS_PerformWork">
+	<llblgenpro:LLBLGenProDataSource2 ID="_ipBanDS" runat="server" DataContainerType="EntityCollection" EnablePaging="True" LivePersistence="False" OnPerformGetDbCount="_ipBanDS_PerformGetDbCount" OnPerformSelect="_ipBanDS_PerformSelect" OnPerformWork="_ipBanDS_PerformWork" AdapterTypeName="SD.HnD.DAL.DatabaseSpecific.DataAccessAdapter, SD.HnD.DALDBSpecific" EntityFactoryTypeName="SD.HnD.DAL.FactoryClasses.IPBanEntityFactory, SD.HnD.DAL">
 		<InsertParameters>
 			<asp:FormParameter DefaultValue="0" FormField="_userID" Name="IPBanSetByUserID" />
 			<asp:FormParameter FormField="_currentDate" Name="IPBanSetOn" />
@@ -31,7 +31,7 @@
 		<UpdateParameters>
 			<asp:FormParameter FormField="_currentDate" Name="IPBanSetOn" />
 		</UpdateParameters>
-	</llblgenpro:LLBLGenProDataSource>
+	</llblgenpro:LLBLGenProDataSource2>
 <br>
 <asp:GridView ID="_ipBansGrid" runat="server" EnableViewState="False" AutoGenerateColumns="False" AllowPaging="False" BackColor="White" BorderColor="#DEDFDE" BorderStyle="None" BorderWidth="1px" Caption="Current IP bans" CaptionAlign="Top" CellPadding="4" DataKeyNames="IPBanID" DataSourceID="_ipBanDS" ForeColor="Black" GridLines="Vertical" HorizontalAlign="Center" OnSelectedIndexChanged="_ipBansGrid_SelectedIndexChanged">
 	<FooterStyle BackColor="#CCCC99" />

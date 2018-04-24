@@ -18,17 +18,7 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 using SD.HnD.BL;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.Utility;
 
 namespace SD.HnD.GUI.Admin
@@ -58,7 +48,7 @@ namespace SD.HnD.GUI.Admin
 			if(!Page.IsPostBack)
 			{
 				// bind the sections repeater to a collection with all sections.
-				SectionCollection sections = SectionGuiHelper.GetAllSections();
+				var sections = SectionGuiHelper.GetAllSections();
 				rpSections.DataSource = sections;
 				rpSections.DataBind();
 			}

@@ -9,7 +9,7 @@ EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "GUI", "GUI\", "{D1192B40-860F-4645-965E-688C1DEB1931}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5.2"
-		ProjectReferences = "{AAEB0829-9929-4706-B7FB-F4E8BFCC32C2}|SD.HnD.Utility.dll;{DCF9E35B-D377-4B8C-A0BB-D31CD6A7EC1A}|SD.HnD.BL.dll;"
+		ProjectReferences = "{AAEB0829-9929-4706-B7FB-F4E8BFCC32C2}|SD.HnD.Utility.dll;{DCF9E35B-D377-4B8C-A0BB-D31CD6A7EC1A}|SD.HnD.BL.dll;{c2f065fb-3317-4d77-94a3-6bf445651c9d}|SD.HnD.DALDBSpecific.dll;{d90c3ee7-d858-4bde-879e-02ebd825e441}|SD.HnD.DAL.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/GUI"
 		Debug.AspNetCompiler.PhysicalPath = "GUI\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\GUI\"

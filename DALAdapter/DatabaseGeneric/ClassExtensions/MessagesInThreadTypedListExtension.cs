@@ -48,7 +48,7 @@ namespace SD.HnD.DAL.TypedListClasses
 			// add a scalar query expression to the list of fields in the typedlist. The scalar query expression 
 			// performs a SELECT COUNT(AttachmentID) FROM Attachments WHERE MessageID = Message.MessageID
 			// query. Pass a type to the CTor as well, as otherwise the type isn't properly determinable. 
-			fields.DefineField(new EntityField("AmountOfAttachments",
+			fields.DefineField(new EntityField2("AmountOfAttachments",
 								new ScalarQueryExpression(AttachmentFields.AttachmentID.SetAggregateFunction(AggregateFunction.Count),
 									(AttachmentFields.MessageID == MessageFields.MessageID)), typeof(int)), index);
 

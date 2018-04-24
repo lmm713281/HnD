@@ -68,7 +68,7 @@ namespace SD.HnD.GUI.Admin
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="SD.LLBLGen.Pro.ORMSupportClasses.PerformGetDbCountEventArgs"/> instance containing the event data.</param>
-		protected void _ipBanDS_PerformGetDbCount(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformGetDbCountEventArgs e)
+		protected void _ipBanDS_PerformGetDbCount(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformGetDbCountEventArgs2 e)
 		{
 			e.DbCount = SecurityGuiHelper.GetTotalIPBanCount();
 		}
@@ -79,7 +79,7 @@ namespace SD.HnD.GUI.Admin
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="SD.LLBLGen.Pro.ORMSupportClasses.PerformSelectEventArgs"/> instance containing the event data.</param>
-		protected void _ipBanDS_PerformSelect(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformSelectEventArgs e)
+		protected void _ipBanDS_PerformSelect(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformSelectEventArgs2 e)
 		{
 			// fetch the page requested, using a BL method. We'll receive a collection from the BL method and will set the collection of the control to the
 			// collection we'll receive. Specify that the user entity is prefetched into the IPBan entity.
@@ -92,7 +92,7 @@ namespace SD.HnD.GUI.Admin
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="SD.LLBLGen.Pro.ORMSupportClasses.PerformWorkEventArgs"/> instance containing the event data.</param>
-		protected void _ipBanDS_PerformWork(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformWorkEventArgs e)
+		protected void _ipBanDS_PerformWork(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformWorkEventArgs2 e)
 		{
 			// the event args contain the UnitOfWork to persist. Pass it on to the BL method
 			SecurityManager.PersistIPBanUnitOfWork(e.Uow);

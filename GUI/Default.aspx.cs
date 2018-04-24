@@ -18,21 +18,13 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Web;
-using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
-using System.Web.Security;
 using SD.HnD.BL;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.DAL.EntityClasses;
-using SD.HnD.DAL;
 using SD.LLBLGen.Pro.ORMSupportClasses;
 using SD.HnD.DAL.HelperClasses;
 using System.IO;
@@ -47,7 +39,7 @@ namespace SD.HnD.GUI
 	{
 		#region Class Member Declarations
 		private Dictionary<int, DataView> _forumViewsPerDisplayedSection;
-        private SectionCollection _sectionsToDisplay;
+        private EntityCollection<SectionEntity> _sectionsToDisplay;
 		#endregion
 
 		private void Page_Load(object sender, System.EventArgs e)
@@ -119,7 +111,7 @@ namespace SD.HnD.GUI
 						forumsWithThreadsFromOthers, SessionAdapter.GetUserID());
 
 				// filter out sections which do not have displayable forums for this user
-				EntityView<SectionEntity> sectionsToUse = CreateFilteredSectionsCollection();
+				EntityView2<SectionEntity> sectionsToUse = CreateFilteredSectionsCollection();
 
 				// show the sections with displayable forums, thus the displayable sections.
 				rpSections.DataSource = sectionsToUse;
@@ -224,7 +216,7 @@ namespace SD.HnD.GUI
 		/// <summary>
         /// Creates an EntityView on _sectionsToDisplay with a filter so that empty sections aren't visible. 
 		/// </summary>
-		private EntityView<SectionEntity> CreateFilteredSectionsCollection()
+		private EntityView2<SectionEntity> CreateFilteredSectionsCollection()
 		{
 			List<int> sectionIDsToFilter = new List<int>();
 			// pair.Key is sectionID, pair.Value is DataView with foruminformation + statistics for all the forums in that section.
@@ -243,12 +235,9 @@ namespace SD.HnD.GUI
 			// if there are no sections to filter out, simply don't pass a filter.
 			if(sectionIDsToFilter.Count <= 0)
 			{
-				return new EntityView<SectionEntity>(_sectionsToDisplay);
+				return new EntityView2<SectionEntity>(_sectionsToDisplay);
 			}
-			else
-			{
-				return new EntityView<SectionEntity>(_sectionsToDisplay, (SectionFields.SectionID != sectionIDsToFilter));
-			}
+			return new EntityView2<SectionEntity>(_sectionsToDisplay, (SectionFields.SectionID != sectionIDsToFilter));
 		}
 
 

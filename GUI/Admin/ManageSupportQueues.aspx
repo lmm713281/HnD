@@ -3,7 +3,7 @@
 <%@ Register Assembly="SD.LLBLGen.Pro.ORMSupportClasses.Web" Namespace="SD.LLBLGen.Pro.ORMSupportClasses" TagPrefix="llblgenpro" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
-<table width="700" align="center" class="ExplanationBox" cellpadding="2" cellspacing="0">
+	<table width="700" align="center" class="ExplanationBox" cellpadding="2" cellspacing="0">
 <tr>
 	<td>
 		<h3>Manage support queues</h3>
@@ -16,10 +16,9 @@
 	</td>
 </tr>
 </table>
-	<llblgenpro:LLBLGenProDataSource ID="_supportQueueDS" runat="server" DataContainerType="EntityCollection" 
-		EntityCollectionTypeName="SD.HnD.DAL.CollectionClasses.SupportQueueCollection, SD.HnD.DAL" 
-		EnablePaging="True" LivePersistence="False" OnPerformSelect="_supportQueueDS_PerformSelect" OnPerformWork="_supportQueueDS_PerformWork">
-	</llblgenpro:LLBLGenProDataSource>
+	<llblgenpro:LLBLGenProDataSource2 ID="_supportQueueDS" runat="server" DataContainerType="EntityCollection" 
+		EnablePaging="True" LivePersistence="False" OnPerformSelect="_supportQueueDS_PerformSelect" OnPerformWork="_supportQueueDS_PerformWork" AdapterTypeName="SD.HnD.DAL.DatabaseSpecific.DataAccessAdapter, SD.HnD.DALDBSpecific" EntityFactoryTypeName="SD.HnD.DAL.FactoryClasses.SupportQueueEntityFactory, SD.HnD.DAL">
+	</llblgenpro:LLBLGenProDataSource2>
 <br>
 <asp:GridView ID="_supportQueuesGrid" runat="server" EnableViewState="False" AutoGenerateColumns="False" BackColor="White" 
 	BorderColor="#DEDFDE" BorderStyle="None" BorderWidth="1px" Caption="Current Support Queues" CaptionAlign="Top" CellPadding="4" 

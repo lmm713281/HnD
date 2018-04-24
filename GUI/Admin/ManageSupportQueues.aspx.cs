@@ -61,7 +61,7 @@ namespace SD.HnD.GUI.Admin
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="SD.LLBLGen.Pro.ORMSupportClasses.PerformSelectEventArgs"/> instance containing the event data.</param>
-		protected void _supportQueueDS_PerformSelect(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformSelectEventArgs e)
+		protected void _supportQueueDS_PerformSelect(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformSelectEventArgs2 e)
 		{
 			_supportQueueDS.EntityCollection = SupportQueueGuiHelper.GetAllSupportQueues();
 		}
@@ -72,7 +72,7 @@ namespace SD.HnD.GUI.Admin
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="SD.LLBLGen.Pro.ORMSupportClasses.PerformWorkEventArgs"/> instance containing the event data.</param>
-		protected void _supportQueueDS_PerformWork(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformWorkEventArgs e)
+		protected void _supportQueueDS_PerformWork(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformWorkEventArgs2 e)
 		{
 			SupportQueueManager.PersistSupportQueueUnitOfWork(e.Uow);
 

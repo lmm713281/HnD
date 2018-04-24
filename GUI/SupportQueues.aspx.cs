@@ -19,16 +19,9 @@
 */
 using System;
 using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Web;
-using System.Web.Security;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using SD.HnD.BL;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.DAL.EntityClasses;
 using SD.HnD.Utility;
 using System.Globalization;
@@ -52,7 +45,7 @@ namespace SD.HnD.GUI
 
 			if(!Page.IsPostBack)
 			{
-				SupportQueueCollection supportQueues = CacheManager.GetAllSupportQueues();
+				var supportQueues = CacheManager.GetAllSupportQueues();
 				rpQueues.DataSource = supportQueues;
 				rpQueues.DataBind();
 			}

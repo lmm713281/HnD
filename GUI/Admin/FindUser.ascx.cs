@@ -17,19 +17,14 @@
 	along with HnD, please see the LICENSE.txt file; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+using SD.HnD.DAL.EntityClasses;
+using SD.HnD.DAL.HelperClasses;
+
 namespace SD.HnD.GUI.Admin
 {
 	using System;
-	using System.Data;
-	using System.Drawing;
-	using System.Web;
 	using System.Web.UI.WebControls;
-	using System.Web.UI.HtmlControls;
-	using System.Collections;
-
-	using SD.LLBLGen.Pro.ORMSupportClasses;
-	using SD.HnD.DAL.CollectionClasses;
-	using SD.HnD.DAL.EntityClasses;
 	using SD.HnD.BL;
 	using System.Collections.Generic;
 
@@ -58,7 +53,7 @@ namespace SD.HnD.GUI.Admin
 
 			if(!Page.IsPostBack)
 			{
-				RoleCollection roles = SecurityGuiHelper.GetAllRoles();
+				EntityCollection<RoleEntity> roles = SecurityGuiHelper.GetAllRoles();
 				cbxRoles.DataSource = roles;
 				cbxRoles.DataTextField = "RoleDescription";
 				cbxRoles.DataValueField = "RoleID";
@@ -127,9 +122,9 @@ namespace SD.HnD.GUI.Admin
 				return;
 			}
 
-			UserCollection matchingUsers = UserGuiHelper.FindUsers(chkFilterOnRole.Checked, Convert.ToInt32(cbxRoles.SelectedValue), 
-					chkFilterOnNickName.Checked, tbxNickName.Text.Trim(), 
-					chkFilterOnEmailAddress.Checked, tbxEmailAddress.Text.Trim());
+			EntityCollection<UserEntity> matchingUsers = UserGuiHelper.FindUsers(chkFilterOnRole.Checked, Convert.ToInt32(cbxRoles.SelectedValue),
+																				 chkFilterOnNickName.Checked, tbxNickName.Text.Trim(),
+																				 chkFilterOnEmailAddress.Checked, tbxEmailAddress.Text.Trim());
 
 			lbxMatchingUsers.DataSource = matchingUsers;
 			lbxMatchingUsers.DataTextField = "NickName";

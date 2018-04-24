@@ -18,18 +18,8 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 
 using SD.HnD.BL;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.DAL.EntityClasses;
 using System.Collections.Generic;
 using SD.HnD.Utility;
@@ -65,7 +55,7 @@ namespace SD.HnD.GUI.Admin
 			if(!Page.IsPostBack)
 			{
 				// Get all roles
-				RoleCollection roles = SecurityGuiHelper.GetAllRoles();
+				var roles = SecurityGuiHelper.GetAllRoles();
 
 				cbxRoles.DataSource = roles;
 				cbxRoles.DataTextField = "RoleDescription";
@@ -79,7 +69,7 @@ namespace SD.HnD.GUI.Admin
 				}
 
 				// get the audit actions
-				AuditActionCollection auditActions = SecurityGuiHelper.GetAllAuditActions();
+				var auditActions = SecurityGuiHelper.GetAllAuditActions();
 
 				cblAuditActions.DataSource = auditActions;
 				cblAuditActions.DataTextField = "AuditActionDescription";
@@ -125,7 +115,7 @@ namespace SD.HnD.GUI.Admin
 		/// </summary>
 		private void ReflectCurrentAuditActions()
 		{	
-			RoleAuditActionCollection roleAuditActions = SecurityGuiHelper.GetAllAuditActionsForRole(_roleID);
+			var roleAuditActions = SecurityGuiHelper.GetAllAuditActionsForRole(_roleID);
 
 			// check the checkboxes in the cblAuditActions list if the value matches an object in the collection
 			foreach(RoleAuditActionEntity roleAuditAction in roleAuditActions)

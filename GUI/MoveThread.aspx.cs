@@ -18,23 +18,12 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 
 using SD.HnD.BL;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.DAL.EntityClasses;
 using SD.HnD.DAL;
 using SD.HnD.Utility;
-using SD.LLBLGen.Pro.ORMSupportClasses;
 
 namespace SD.HnD.GUI
 {
@@ -90,7 +79,7 @@ namespace SD.HnD.GUI
 			if(!Page.IsPostBack)
 			{
 				// fill the page's content. Bind the known sections
-				SectionCollection sections = CacheManager.GetAllSections();
+				var sections = CacheManager.GetAllSections();
 				cbxSections.DataSource = sections;
 				cbxSections.DataBind();
 
@@ -159,8 +148,8 @@ namespace SD.HnD.GUI
 		/// Handles the PerformSelect event of the _forumsDS control.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="SD.LLBLGen.Pro.ORMSupportClasses.PerformSelectEventArgs"/> instance containing the event data.</param>
-		protected void _forumsDS_PerformSelect(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformSelectEventArgs e)
+		/// <param name="e">The <see cref="SD.LLBLGen.Pro.ORMSupportClasses.PerformSelectEventArgs2"/> instance containing the event data.</param>
+		protected void _forumsDS_PerformSelect(object sender, SD.LLBLGen.Pro.ORMSupportClasses.PerformSelectEventArgs2 e)
 		{
 			int selectedSectionID = HnDGeneralUtils.TryConvertToInt(cbxSections.SelectedValue);
 			_forumsDS.EntityCollection = ForumGuiHelper.GetAllForumsInSection(selectedSectionID);

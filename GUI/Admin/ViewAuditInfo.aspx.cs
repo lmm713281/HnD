@@ -18,18 +18,9 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 
 using SD.HnD.BL;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.DAL.EntityClasses;
 using System.Collections.Generic;
 
@@ -99,7 +90,7 @@ namespace SD.HnD.GUI.Admin
 			int selectedUserID = selectedUserIDs[0];
 			UserEntity user = UserGuiHelper.GetUser(selectedUserID);
 			lblUserName.Text = user.NickName;
-			AuditDataCoreCollection audits = SecurityGuiHelper.GetAllAuditsForUser(selectedUserID);
+			var audits = SecurityGuiHelper.GetAllAuditsForUser(selectedUserID);
 			phAuditInfo.Visible=true;
 
 			rptAudits.DataSource = audits;

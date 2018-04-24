@@ -18,22 +18,12 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 
-using SD.LLBLGen.Pro.ORMSupportClasses;
 using SD.HnD.BL;
-using SD.HnD.DAL.CollectionClasses;
-using SD.HnD.DAL.EntityClasses;
 using SD.HnD.Utility;
 using System.Collections.Generic;
+using SD.HnD.DAL.EntityClasses;
+using SD.HnD.DAL.HelperClasses;
 
 namespace SD.HnD.GUI.Admin
 {
@@ -43,7 +33,7 @@ namespace SD.HnD.GUI.Admin
 	public partial class SendEmail : System.Web.UI.Page
 	{
 		#region Class Member Declarations
-		private UserCollection _selectedUsers = new UserCollection();
+		private EntityCollection<UserEntity> _selectedUsers = new EntityCollection<UserEntity>();
 		#endregion
 
 
@@ -134,7 +124,7 @@ namespace SD.HnD.GUI.Admin
 		/// </summary>
 		private void GetViewState()
 		{
-			_selectedUsers = (UserCollection)ViewState["selectedUsers"];
+			_selectedUsers = (EntityCollection<UserEntity>)ViewState["selectedUsers"];
 		}
 
 

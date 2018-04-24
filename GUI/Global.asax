@@ -2,7 +2,6 @@
 <%@ Import Namespace="SD.HnD.BL" %>
 <%@ Import Namespace="System.Data" %>
 <%@ Import Namespace="SD.HnD.DAL.EntityClasses" %>
-<%@ Import Namespace="SD.HnD.DAL.CollectionClasses" %>
 <%@ Import Namespace="SD.HnD.GUI" %>
 
 <script runat="server">
@@ -35,7 +34,7 @@
 	/// <param name="e"></param>
 	protected void Application_Start( Object sender, EventArgs e )
 	{
-		SD.Tools.OrmProfiler.Interceptor.InterceptorCore.Initialize("HnD_3.5 Dev");
+		SD.Tools.OrmProfiler.Interceptor.InterceptorCore.Initialize("HnD Dev");
 
 		// Use static method in BL to fill the Application object with the data which is systemwide
 		// and thus cacheable in the application object.

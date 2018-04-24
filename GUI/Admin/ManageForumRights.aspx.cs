@@ -18,20 +18,11 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 
 using SD.HnD.BL;
 using SD.HnD.DAL.EntityClasses;
 using System.Collections.Generic;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.Utility;
 
 namespace SD.HnD.GUI.Admin
@@ -92,7 +83,7 @@ namespace SD.HnD.GUI.Admin
 				FillForumList();
 
 				// get the forum action rights
-				ActionRightCollection actionRights = SecurityGuiHelper.GetAllActionRightsApplybleToAForum();
+				var actionRights = SecurityGuiHelper.GetAllActionRightsApplybleToAForum();
 
 				cblForumRights.DataSource = actionRights;
 				cblForumRights.DataTextField = "ActionRightDescription";
@@ -116,7 +107,7 @@ namespace SD.HnD.GUI.Admin
 		/// </summary>
 		private void ReflectCurrentActionRights()
 		{	
-			ForumRoleForumActionRightCollection  actionRights = SecurityGuiHelper.GetForumActionRightRolesFoForumRole(_roleID, _forumID);
+			var  actionRights = SecurityGuiHelper.GetForumActionRightRolesFoForumRole(_roleID, _forumID);
 
 			foreach(ForumRoleForumActionRightEntity currentEntity in actionRights)
 			{
@@ -134,7 +125,7 @@ namespace SD.HnD.GUI.Admin
 			cbxForums.Items.Clear();
 
 			int currentSectionID = Convert.ToInt32(cbxSections.SelectedItem.Value);
-			ForumCollection forums = ForumGuiHelper.GetAllForumsInSection(currentSectionID);
+			var forums = ForumGuiHelper.GetAllForumsInSection(currentSectionID);
 
 			cbxForums.DataSource = forums;
 			cbxForums.DataTextField = "ForumName";

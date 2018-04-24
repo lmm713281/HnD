@@ -112,7 +112,7 @@ namespace SD.HnD.BL
 		{
 			var qf = new QueryFactory();
 			var q = qf.IPBan
-						.OrderBy(IPBanFields.Range.Ascending())
+						.OrderBy(IPBanFields.IPSegment1.Ascending(), IPBanFields.IPSegment2.Ascending(), IPBanFields.IPSegment3.Ascending(), IPBanFields.IPSegment4.Ascending())
 						.Page(pageNo, pageSize);
 			if(prefetchUser)
 			{

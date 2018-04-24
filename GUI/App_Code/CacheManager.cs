@@ -26,7 +26,6 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-using SD.HnD.DAL.CollectionClasses;
 using System.Web.Caching;
 using SD.HnD.BL;
 using SD.HnD.DAL.EntityClasses;
@@ -46,10 +45,10 @@ public static class CacheManager
 	/// </summary>
 	/// <returns>A SectionCollection with all SectionEntity instances of the sections of the forum system. This collection has to be threated as
 	/// a readonly collection with readonly objects</returns>
-	public static SectionCollection GetAllSections()
+	public static EntityCollection<SectionEntity> GetAllSections()
 	{
 		Cache activeCache = HttpRuntime.Cache;
-		SectionCollection toReturn = (SectionCollection)activeCache[CacheKeys.AllSections];
+		var toReturn = (EntityCollection<SectionEntity>)activeCache[CacheKeys.AllSections];
 		if(toReturn == null)
 		{
 			// not there, store it.
@@ -70,20 +69,13 @@ public static class CacheManager
 	/// <returns>name of the section passed in.</returns>
 	public static string GetSectionName(int sectionID)
 	{
-		SectionCollection cachedSections = CacheManager.GetAllSections();
+		EntityCollection<SectionEntity> cachedSections = CacheManager.GetAllSections();
 
 		// use in-memory filtering. 
 		List<int> matches = cachedSections.FindMatches((SectionFields.SectionID == sectionID));
 		
 		// 0 or 1 matches
-		if(matches.Count > 0)
-		{
-			return cachedSections[matches[0]].SectionName;
-		}
-		else
-		{
-			return string.Empty;
-		}
+		return matches.Count > 0 ? cachedSections[matches[0]].SectionName : string.Empty;
 	}
 
 
@@ -141,10 +133,10 @@ public static class CacheManager
 	/// <returns>A SupportQueueCollection with all supportqueue Entity instances of the support queues of the forum system. This collection has to be threated as
 	/// a readonly collection with readonly objects</returns>
 	/// </summary>
-	public static SupportQueueCollection GetAllSupportQueues()
+	public static EntityCollection<SupportQueueEntity> GetAllSupportQueues()
 	{
 		Cache activeCache = HttpRuntime.Cache;
-		SupportQueueCollection toReturn = (SupportQueueCollection)activeCache[CacheKeys.AllSupportQueues];
+		var toReturn = (EntityCollection<SupportQueueEntity>)activeCache[CacheKeys.AllSupportQueues];
 		if(toReturn == null)
 		{
 			// not there, store it.
@@ -152,7 +144,6 @@ public static class CacheManager
 			// just store it in the cache without any dependency, as it's hardly changing. 
 			activeCache.Insert(CacheKeys.AllSupportQueues, toReturn);
 		}
-
 		return toReturn;
 	}
 
@@ -197,7 +188,7 @@ public static class CacheManager
 		if(toReturn == null)
 		{
 			// not there, store it.
-			IPBanCollection allIPBans = SecurityGuiHelper.GetAllIPBans(0, 0, false);
+			EntityCollection<IPBanEntity> allIPBans = SecurityGuiHelper.GetAllIPBans(0, 0, false);
 			toReturn = new Dictionary<int, Dictionary<string, IPBanEntity>>();
 			foreach(IPBanEntity currentIPBan in allIPBans)
 			{

@@ -73,13 +73,13 @@
 		<td class="EmptyRowBottom">&nbsp;</td>
 	</tr>
 </table>
-<llblgenpro:llblgenprodatasource id="_forumsDS" runat="server" cachelocation="Session" livepersistence="False" 
-	DataContainerType="EntityCollection" EntityCollectionTypeName="SD.HnD.DAL.CollectionClasses.ForumCollection, SD.HnD.DAL" 
-	OnPerformSelect="_forumsDS_PerformSelect">
+<llblgenpro:llblgenprodatasource2 id="_forumsDS" runat="server" cachelocation="Session" livepersistence="False" 
+	DataContainerType="EntityCollection"
+	OnPerformSelect="_forumsDS_PerformSelect" AdapterTypeName="SD.HnD.DAL.DatabaseSpecific.DataAccessAdapter, SD.HnD.DALDBSpecific" EntityFactoryTypeName="SD.HnD.DAL.FactoryClasses.ForumEntityFactory, SD.HnD.DAL">
 	<SelectParameters>
 		<asp:ControlParameter ControlID="cbxSections" Name="SectionID" PropertyName="SelectedValue" />
 	</SelectParameters>
-</llblgenpro:llblgenprodatasource>
+</llblgenpro:llblgenprodatasource2>
 </form>
 <!-- footer -->
 <hnd:pagefooter runat="server" id="PageFooter" />

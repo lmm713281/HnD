@@ -18,20 +18,10 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 
 using SD.HnD.BL;
 using SD.HnD.DAL.EntityClasses;
 using System.Collections.Generic;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.Utility;
 
 namespace SD.HnD.GUI.Admin
@@ -72,7 +62,7 @@ namespace SD.HnD.GUI.Admin
 				}
 
 				// get the system rights
-				ActionRightCollection systemActionRights = SecurityGuiHelper.GetAllSystemActionRights();
+				var systemActionRights = SecurityGuiHelper.GetAllSystemActionRights();
 
 				cblSystemRights.DataSource = systemActionRights;
 				cblSystemRights.DataTextField = "ActionRightDescription";
@@ -80,7 +70,7 @@ namespace SD.HnD.GUI.Admin
 				cblSystemRights.DataBind();
 
 				// get the action rights set for this role
-				RoleSystemActionRightCollection systemActionRightRoleCombinations = SecurityGuiHelper.GetSystemActionRightRolesForRole(_roleID);
+				var systemActionRightRoleCombinations = SecurityGuiHelper.GetSystemActionRightRolesForRole(_roleID);
 
 				// check the checkboxes in the cblSystemRights list if the value matches a row in the datatable
 				foreach(RoleSystemActionRightEntity currentEntity in systemActionRightRoleCombinations)

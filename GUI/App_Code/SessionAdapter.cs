@@ -27,7 +27,6 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using SD.HnD.DAL.EntityClasses;
-using SD.HnD.DAL.CollectionClasses;
 using SD.HnD.BL;
 using SD.HnD.DAL;
 using System.Collections;
@@ -60,27 +59,20 @@ namespace SD.HnD.GUI
             // Adds the user object to session
             AddUserObject(user);
 
-			ActionRightCollection systemActionRights = SecurityGuiHelper.GetSystemActionRightsForUser(user.UserID);
+			EntityCollection<ActionRightEntity> systemActionRights = SecurityGuiHelper.GetSystemActionRightsForUser(user.UserID);
             // add user system rights to the session object
             AddSystemActionRights(systemActionRights);
 
-			AuditActionCollection auditActions = SecurityGuiHelper.GetAuditActionsForUser(user.UserID);
+			EntityCollection<AuditActionEntity> auditActions = SecurityGuiHelper.GetAuditActionsForUser(user.UserID);
 			// add user audit actions to the session object
             AddAuditActions(auditActions);
 
-			ForumRoleForumActionRightCollection forumActionRights = SecurityGuiHelper.GetForumsActionRightsForUser(user.UserID);
+			EntityCollection<ForumRoleForumActionRightEntity> forumActionRights = SecurityGuiHelper.GetForumsActionRightsForUser(user.UserID);
             // add user forums rights to the session object
             AddForumsActionRights(forumActionRights);
 
 			// set the last visit date. 
-			if((user.UserID > 0) && (user.LastVisitedDate.HasValue))
-			{
-				SessionAdapter.AddLastVisitDate(user.LastVisitedDate.Value, true);
-			}
-			else
-			{
-				SessionAdapter.AddLastVisitDate(DateTime.Now, true);
-			}
+			SessionAdapter.AddLastVisitDate(((user.UserID > 0) && (user.LastVisitedDate.HasValue)) ? user.LastVisitedDate.Value : DateTime.Now, true);
         }
 
 
@@ -89,12 +81,12 @@ namespace SD.HnD.GUI
         /// </summary>
         public static void LoadAnonymousSessionData()
         {
-			ForumRoleForumActionRightCollection forumActionRights = SecurityGuiHelper.GetForumsActionRightsForUser(0); // 0 is the the Anonymous userID.
+			EntityCollection<ForumRoleForumActionRightEntity> forumActionRights = SecurityGuiHelper.GetForumsActionRightsForUser(0); // 0 is the the Anonymous userID.
             // add user forums rights to the session object
             AddForumsActionRights(forumActionRights);
         }
 
-        #region Managing UserEntity Session object
+
         /// <summary>
         /// Adds the user object to session.
         /// If the object already exists, it is overwritten with the new value.
@@ -204,15 +196,12 @@ namespace SD.HnD.GUI
 
 		}
 
-        #endregion
-
-        #region Managing SystemActionRights Session object
         /// <summary>
         /// Adds the system action rights collection to the session.
         /// If the object already exists, it is overwritten with the new value.
         /// </summary>
         /// <param name="actionRights">The action rights.</param>
-        private static void AddSystemActionRights(ActionRightCollection actionRights)
+        private static void AddSystemActionRights(EntityCollection<ActionRightEntity> actionRights)
         {
             //Adds a new item to the session-state collection.
             //If the name parameter refers to an existing session state item, the existing item is overwritten with the specified value.
@@ -223,13 +212,12 @@ namespace SD.HnD.GUI
         /// Gets the system action rights from the session.
         /// </summary>
         /// <returns>ActionRightCollection if available otherwise returns null.</returns>
-        private static ActionRightCollection GetSystemActionRights()
+        private static EntityCollection<ActionRightEntity> GetSystemActionRights()
         {
             if (HttpContext.Current.Session["systemActionRights"] != null)
             {
-                return (ActionRightCollection)HttpContext.Current.Session["systemActionRights"];
+                return (EntityCollection<ActionRightEntity>)HttpContext.Current.Session["systemActionRights"];
             }
-
             return null;
         }
 
@@ -240,17 +228,13 @@ namespace SD.HnD.GUI
 		/// <returns>true if the user can administrate system, user or security</returns>
 		public static bool CanAdministrate()
 		{
-			ActionRightCollection actionRights = GetSystemActionRights();
+			EntityCollection<ActionRightEntity> actionRights = GetSystemActionRights();
 			if((actionRights == null) || (actionRights.Count <= 0))
 			{
 				return false;
 			}
 			// use FindMatches to determine if there are actionrights present which allow administation.
-			List<int> toFind = new List<int>();
-			toFind.Add((int)ActionRights.SystemManagement);
-			toFind.Add((int)ActionRights.SecurityManagement);
-			toFind.Add((int)ActionRights.UserManagement);
-
+			List<int> toFind = new List<int> {(int)ActionRights.SystemManagement, (int)ActionRights.SecurityManagement, (int)ActionRights.UserManagement};
 			return (actionRights.FindMatches((ActionRightFields.ActionRightID == toFind)).Count > 0);
 		}
 
@@ -262,15 +246,10 @@ namespace SD.HnD.GUI
         /// 	<c>true</c> if system action rights exist in the session; otherwise, <c>false</c>.
         /// </returns>
         public static bool HasSystemActionRights()
-        {
-            ActionRightCollection actionRights = GetSystemActionRights();
-            if (actionRights != null)
-            {
-                return (actionRights.Count > 0);
-            }
-
-            return false;
-        }
+		{
+			EntityCollection<ActionRightEntity> actionRights = GetSystemActionRights();
+			return actionRights != null && actionRights.Count > 0;
+		}
 
         /// <summary>
         /// Checks if the user of the current context(session) has the ability to perform the action right on the system.
@@ -281,25 +260,22 @@ namespace SD.HnD.GUI
         /// system, false otherwise.</returns>
         public static bool HasSystemActionRight(ActionRights actionRightID)
         {
-            ActionRightCollection actionRights = GetSystemActionRights();
+			EntityCollection<ActionRightEntity> actionRights = GetSystemActionRights();
             if (actionRights != null && actionRights.Count > 0)
             {
 				// use the FindMatches routine to find all entities which match with the filter on the specified actionrightid
 				return (actionRights.FindMatches((ActionRightFields.ActionRightID == (int)actionRightID)).Count > 0);
             }
-
             return false;
         }
-        #endregion
 
-        #region Managing AuditActions Session object
 
-        /// <summary>
-        /// Adds the audit actions collection to the session.
-        /// If the object already exists, it is overwritten with the new value.
-        /// </summary>
-        /// <param name="actionRights">The action rights.</param>
-        private static void AddAuditActions(AuditActionCollection auditActions)
+		/// <summary>
+		/// Adds the audit actions collection to the session.
+		/// If the object already exists, it is overwritten with the new value.
+		/// </summary>
+		/// <param name="auditActions"></param>
+		private static void AddAuditActions(EntityCollection<AuditActionEntity> auditActions)
         {
             //Adds a new item to the session-state collection.
             //If the name parameter refers to an existing session state item, the existing item is overwritten with the specified value.
@@ -310,14 +286,10 @@ namespace SD.HnD.GUI
         /// Gets the audit actions from the session.
         /// </summary>
         /// <returns>AuditActionCollection if available otherwise returns null.</returns>
-        private static AuditActionCollection GetAuditActions()
-        {
-            if (HttpContext.Current.Session["auditActions"] != null)
-            {
-                return (AuditActionCollection)HttpContext.Current.Session["auditActions"];
-            }
-            return null;
-        }
+        private static EntityCollection<AuditActionEntity> GetAuditActions()
+		{
+			return HttpContext.Current.Session["auditActions"] != null ? (EntityCollection<AuditActionEntity>)HttpContext.Current.Session["auditActions"] : null;
+		}
 
         /// <summary>
         /// Checks if the current user needs auditing for the action specified
@@ -326,22 +298,18 @@ namespace SD.HnD.GUI
         /// <returns>true if the user needs auditing, otherwise false</returns>
         public static bool CheckIfNeedsAuditing(AuditActions auditActionID)
         {
-            AuditActionCollection auditActions = GetAuditActions();
+			EntityCollection<AuditActionEntity> auditActions = GetAuditActions();
             if (auditActions != null && auditActions.Count > 0)
             {
                 // create an ActionRight entity, and forcing the PK value, to avoid fetching it from the database.
                 AuditActionEntity auditAction = new AuditActionEntity();
                 auditAction.Fields[(int)AuditActionFieldIndex.AuditActionID].ForcedCurrentValueWrite((int)auditActionID);
                 auditAction.IsNew = false;
-
                 return auditActions.Contains(auditAction);
             }
-
             return false;
         }
-        #endregion
 
-        #region Managing ForumsActionRights Session object
         /// <summary>
         /// Adds the forums action rights collection to the session.
         /// If the object already exists, it is overwritten with the new value.
@@ -360,7 +328,7 @@ namespace SD.HnD.GUI
         /// action right 'Access forum', the ForumIDs 1, 3, 4, and 8 are placed. 
         /// </summary>
         /// <param name="forumsActionRights">The action rights.</param>
-        private static void AddForumsActionRights(ForumRoleForumActionRightCollection forumsActionRights)
+        private static void AddForumsActionRights(EntityCollection<ForumRoleForumActionRightEntity> forumsActionRights)
         {
             // create a dictionary that will be stored in the session
             Dictionary<int, List<int>> forumsActionRightsInSession = new Dictionary<int, List<int>>();
@@ -399,13 +367,9 @@ namespace SD.HnD.GUI
         /// </summary>
         /// <returns>Dictionary of ActionRightID as a key and List of forumIDs as the corresponding value, if available otherwise returns null.</returns>
         private static Dictionary<int, List<int>> GetForumsActionRights()
-        {
-            if (HttpContext.Current.Session["forumsActionRights"] != null)
-            {
-                return (Dictionary<int, List<int>>)HttpContext.Current.Session["forumsActionRights"];
-            }
-            return null;
-        }
+		{
+			return HttpContext.Current.Session["forumsActionRights"] != null ? (Dictionary<int, List<int>>)HttpContext.Current.Session["forumsActionRights"] : null;
+		}
 
         /// <summary>
         /// Checks if the user of the current context has the ability to perform the action right given
@@ -464,9 +428,7 @@ namespace SD.HnD.GUI
 
             return null;
         }
-        #endregion
 
-        #region Managing LastVisitDate
         /// <summary>
         /// Adds the lastVisitDate & isLastVisitDateValid to the session.
         /// </summary>
@@ -485,32 +447,19 @@ namespace SD.HnD.GUI
         /// </summary>
         /// <returns>The boolean value if available otherwise returns false as the default value.</returns>
         public static bool IsLastVisitDateValid()
-        {
-            if (HttpContext.Current.Session["isLastVisitDateValid"] != null)
-            {
-                return (bool)HttpContext.Current.Session["isLastVisitDateValid"];
-            }
-
-            return false;
-        }
+		{
+			return HttpContext.Current.Session["isLastVisitDateValid"] != null && (bool)HttpContext.Current.Session["isLastVisitDateValid"];
+		}
 
         /// <summary>
         /// Gets the last visit date stored in the session object.
         /// </summary>
         /// <returns>DateTime of last visit date if available, otherwise returns DateTime.MinValue</returns>
         public static DateTime GetLastVisitDate()
-        {
-            if (HttpContext.Current.Session["lastVisitDate"] != null)
-            {
-                return (DateTime)HttpContext.Current.Session["lastVisitDate"];
-            }
+		{
+			return HttpContext.Current.Session["lastVisitDate"] != null ? (DateTime)HttpContext.Current.Session["lastVisitDate"] : DateTime.MinValue;
+		}
 
-            return DateTime.MinValue;
-        }
-
-        #endregion
-
-        #region Managing Search Terms and Results
         /// <summary>
         /// Adds the search terms and results to the session.
         /// </summary>
@@ -529,30 +478,18 @@ namespace SD.HnD.GUI
         /// </summary>
         /// <returns>string of search terms, and an empty string if no such value is present in the session</returns>
         public static string GetSearchTerms()
-        {
-            if (HttpContext.Current.Session["searchTerms"] != null)
-            {
-                return (string)HttpContext.Current.Session["searchTerms"];
-            }
-
-            return string.Empty;
-        }
+		{
+			return HttpContext.Current.Session["searchTerms"] != null ? (string)HttpContext.Current.Session["searchTerms"] : string.Empty;
+		}
 
         /// <summary>
         /// Gets the search results.
         /// </summary>
         /// <returns>A dataTable of search results, and null if no such value is present in the session</returns>
         public static DataTable GetSearchResults()
-        {
-            if (HttpContext.Current.Session["searchResults"] != null)
-            {
-                return (DataTable)HttpContext.Current.Session["searchResults"];
-            }
-
-            return null;
-        }
-
-        #endregion
+		{
+			return HttpContext.Current.Session["searchResults"] != null ? (DataTable)HttpContext.Current.Session["searchResults"] : null;
+		}
 
 		/// <summary>
 		/// Sets a temporary result in the session. The value is meant to be temporary.
@@ -576,10 +513,7 @@ namespace SD.HnD.GUI
 			{
 				return default(T);
 			}
-			else
-			{
-				return (T)value;
-			}
+			return (T)value;
 		}
 	}
 }

@@ -19,14 +19,9 @@
 */
 using System;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Net.Mail;
-using System.IO;
 using System.Security.Cryptography;
-using System.Collections;
-using System.Globalization;
 using System.Collections.Generic;
-using System.Net;
 
 namespace SD.HnD.Utility
 {
@@ -38,7 +33,7 @@ namespace SD.HnD.Utility
 		/// <summary>
 		/// Private constant for the maximum length for a generated password.
 		/// </summary>
-		private static readonly int GeneratedPasswordLength = 10;
+		private const int GeneratedPasswordLength = 20;
 
 
 		/// <summary>
@@ -48,8 +43,7 @@ namespace SD.HnD.Utility
 		/// <returns>int value which is represented by the string representation toConvert, or 0 if conversion failed</returns>
 		public static int TryConvertToInt(string toConvert)
 		{
-			int toReturn = 0;
-			if(!Int32.TryParse(toConvert, out toReturn))
+			if(!Int32.TryParse(toConvert, out var toReturn))
 			{
 				toReturn = 0;
 			}
@@ -64,8 +58,7 @@ namespace SD.HnD.Utility
 		/// <returns>short value which is represented by the string representation toConvert, or 0 if conversion failed</returns>
 		public static short TryConvertToShort(string toConvert)
 		{
-			short toReturn = 0;
-			if(!Int16.TryParse(toConvert, out toReturn))
+			if(!Int16.TryParse(toConvert, out var toReturn))
 			{
 				toReturn = 0;
 			}
@@ -80,19 +73,17 @@ namespace SD.HnD.Utility
 		/// <returns>a password string, generated using a randomizer.</returns>
 		public static string GenerateRandomPassword()
 		{
-			StringBuilder newPassword = new StringBuilder(GeneratedPasswordLength);
+			var newPassword = new StringBuilder(GeneratedPasswordLength);
 			
 			// create randomizer object
 			Random rand = new Random(DateTime.Now.Millisecond + DateTime.Now.Second);
-			
 			for(int i = 0, randomNr=0;i < GeneratedPasswordLength; i++)
 			{
 				bool isValid = false;
 				while(!isValid)
 				{
 					randomNr = rand.Next(33, 126);
-					isValid = (randomNr > 47 && randomNr < 58) || (randomNr > 64 && randomNr < 91) ||
-								(randomNr > 96 && randomNr < 123);
+					isValid = (randomNr > 47 && randomNr < 58) || (randomNr > 64 && randomNr < 91) || (randomNr > 96 && randomNr < 123);
 				}
 				newPassword.Append(Convert.ToChar(randomNr));
 			}
@@ -110,7 +101,7 @@ namespace SD.HnD.Utility
 		{
 			// get generic MD5 hasher
 			MD5CryptoServiceProvider md5Hasher = new MD5CryptoServiceProvider();
-			return Convert.ToBase64String(md5Hasher.ComputeHash(ASCIIEncoding.ASCII.GetBytes(sToHash)));
+			return Convert.ToBase64String(md5Hasher.ComputeHash(Encoding.ASCII.GetBytes(sToHash)));
 		}
 
 
@@ -130,9 +121,12 @@ namespace SD.HnD.Utility
 			string defaultToMailAddress = string.Empty;
 			emailData.TryGetValue("defaultToEmailAddress", out defaultToMailAddress);
 
-			MailMessage messageToSend = new MailMessage(fromAddress, defaultToMailAddress);
-			messageToSend.Subject=subject;
-			messageToSend.Body = message;
+			MailMessage messageToSend = new MailMessage(fromAddress, defaultToMailAddress ?? string.Empty)
+										{
+											Subject = subject,
+											Body = message,
+											BodyEncoding = Encoding.UTF8,
+										};
 			for(int i = 0; i < toEmailAddresses.Length; i++)
 			{
 				messageToSend.Bcc.Add(new MailAddress(toEmailAddresses[i]));
@@ -175,8 +169,8 @@ namespace SD.HnD.Utility
 				string siteName = string.Empty;
 				emailData.TryGetValue("siteName", out siteName);
 
-				mailBody.Replace("[URL]", applicationURL);
-				mailBody.Replace("[SiteName]", siteName);
+				mailBody.Replace("[URL]", applicationURL ?? string.Empty);
+				mailBody.Replace("[SiteName]", siteName ?? string.Empty);
 				mailBody.Replace("[Password]", password);
 			}
 
@@ -191,7 +185,13 @@ namespace SD.HnD.Utility
 			// send it
 			// host and smtp credentials are set in .config file
 			SmtpClient client = new SmtpClient();
-			client.Send(fromAddress, emailAddress, subject, mailBody.ToString());
+			MailMessage messageToSend = new MailMessage(fromAddress ?? string.Empty, emailAddress)
+										{
+											Subject = subject,
+											Body = mailBody.ToString(),
+											BodyEncoding = Encoding.UTF8,
+										};
+			client.Send(messageToSend);
 			return true;
 		}
 
