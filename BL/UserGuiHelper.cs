@@ -169,7 +169,7 @@ namespace SD.HnD.BL
 			}
 			var qf = new QueryFactory();
 			var q = qf.Create()
-							.Select(ThreadGuiHelper.BuildQueryProjectionForAllThreadsWithStats(qf))
+							.Select(ThreadFields.ThreadID)
 							.From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf))
 							.Where((ThreadFields.ForumID == accessableForums)
 									.And(ThreadFields.ThreadID.In(qf.Create()

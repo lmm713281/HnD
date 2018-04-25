@@ -31,7 +31,10 @@ using SD.HnD.BL;
 using SD.HnD.DAL.EntityClasses;
 using System.Text;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using SD.HnD.DAL.HelperClasses;
+using SD.HnD.GUI;
+using SD.LLBLGen.Pro.ORMSupportClasses;
 
 /// <summary>
 /// Simple Cache manager which forms a central point to obtain / invalidate / store data into the ASP.NET cache object of this CacheManager.
@@ -39,6 +42,25 @@ using SD.HnD.DAL.HelperClasses;
 /// <remarks>This cache is for caching data only, not page output. </remarks>
 public static class CacheManager
 {
+	/// <summary>
+	/// Initializes the resultset cache for the forum system which is used to cache resultsets using the LLBLGen Pro resultset caching system. Uses
+	/// the name 'ResultsetCacheConfiguration' for config settings.
+	/// </summary>
+	/// <param name="connectionString"></param>
+	/// <param name="memoryCacheConfig">The optional set of name-value pairs to configure the cache with if nothing is specified in the config file</param>
+	public static void InitializeResultsetCache(string connectionString, NameValueCollection memoryCacheConfig)
+	{
+		var memoryCacheConfigToUse = memoryCacheConfig;
+		if(memoryCacheConfigToUse == null)
+		{
+			memoryCacheConfigToUse = new NameValueCollection();
+			memoryCacheConfigToUse["cacheMemoryLimitMegabytes"] = "64";
+			memoryCacheConfigToUse["pollingInterval"] = "00:00:30";
+		}
+		CacheController.RegisterCache(connectionString, new MemoryCachedResultsetCache("ResultsetCacheConfiguration", memoryCacheConfigToUse));
+	}
+
+
 	/// <summary>
 	/// Gets all sections in a collection from the Cache. If it's not available, the collection with all the section entities is loaded from the DB and
 	/// added to the cache. 
@@ -132,7 +154,6 @@ public static class CacheManager
 	/// </summary>
 	/// <returns>A SupportQueueCollection with all supportqueue Entity instances of the support queues of the forum system. This collection has to be threated as
 	/// a readonly collection with readonly objects</returns>
-	/// </summary>
 	public static EntityCollection<SupportQueueEntity> GetAllSupportQueues()
 	{
 		Cache activeCache = HttpRuntime.Cache;

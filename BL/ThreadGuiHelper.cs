@@ -376,18 +376,29 @@ namespace SD.HnD.BL
 		{
 			return qf.Thread
 						.LeftJoin(qf.User.As("ThreadStarterUser")).On(ThreadFields.StartedByUserID == UserFields.UserID.Source("ThreadStarterUser"))
-						.InnerJoin(qf.Message.As("LastMessage")).On((ThreadFields.ThreadID == MessageFields.ThreadID.Source("LastMessage"))
-									.And(MessageFields.MessageID.Source("LastMessage").Equal(
-											qf.Create()
-												.Select(MessageFields.MessageID)
-												.Where(MessageFields.ThreadID == MessageFields.ThreadID.Source("LastMessage"))
-												.Limit(1)
-												.OrderBy(MessageFields.PostingDate.Descending())
-												.ToScalar()
-												.ForceRowLimit())))		// force the row limit otherwise the scalar won't have the TOP 1, which will force
-																		// the engine to remove the orderby / distinct as it otherwise fails. 
+						.InnerJoin(qf.Create("LastMessage")
+												 .Select(MessageFields.MessageID.Source("m1"), MessageFields.PostedByUserID.Source("m1"), MessageFields.ThreadID.Source("m1"))
+												 .From(qf.Message.As("m1").LeftJoin(qf.Message.As("m2"))
+														 .On(MessageFields.ThreadID.Source("m1").Equal(MessageFields.ThreadID.Source("m2"))
+																		  .And(MessageFields.MessageID.Source("m1").LesserThan(MessageFields.MessageID.Source("m2")))))
+												 .Where(MessageFields.MessageID.Source("m2").IsNull()))
+							.On(ThreadFields.ThreadID == MessageFields.ThreadID.Source("LastMessage"))
 						.LeftJoin(qf.User.As("LastPostingUser"))
 								.On(MessageFields.PostedByUserID.Source("LastMessage") == UserFields.UserID.Source("LastPostingUser"));
+
+			// the LastMessage query is also doable with a scalar query sorted descending to obtain the last message, however this turns out to be slower:
+			/*
+				qf.Message.As("LastMessage")).On((ThreadFields.ThreadID == MessageFields.ThreadID.Source("LastMessage"))
+					.And(MessageFields.MessageID.Source("LastMessage").Equal(
+						qf.Create()
+							.Select(MessageFields.MessageID)
+							.Where(MessageFields.ThreadID == MessageFields.ThreadID.Source("LastMessage"))
+							.Limit(1)
+							.OrderBy(MessageFields.PostingDate.Descending())
+							.ToScalar()
+							.ForceRowLimit())))		// force the row limit otherwise the scalar won't have the TOP 1, which will force
+													// the engine to remove the orderby / distinct as it otherwise fails. 
+			*/
 		}
 	}
 }

@@ -137,6 +137,8 @@ namespace SD.HnD.BL
 					// remove the forum entity. do this by executing a direct delete statement on the database
 					adapter.DeleteEntitiesDirectly(typeof(ForumEntity), new RelationPredicateBucket(ForumFields.ForumID == forumID));
 					adapter.Commit();
+					// purge cached threads for this forum, so the thread is visible in the list of threads of the forum.
+					CacheController.PurgeResultsets("Threads_" + forumID);
 					return true;
 				}
 				catch
@@ -213,9 +215,11 @@ namespace SD.HnD.BL
 
 					// update thread statistics, this is the task for the message manager, and we pass the transaction object so the actions will run in
 					// the same transaction.
-					MessageManager.UpdateStatisticsAfterMessageInsert(newMessage.ThreadID, userID, adapter, postingDate, false, subscribeToThread);
+					MessageManager.UpdateStatisticsAfterMessageInsert(newThread.ThreadID, userID, adapter, postingDate, false, subscribeToThread);
 
 					adapter.Commit();
+					// purge cached threads for this forum, so the thread is visible in the list of threads of the forum.
+					CacheController.PurgeResultsets("Threads_" + forumID);
 					return newThread.ThreadID;
 				}
 				catch(Exception)

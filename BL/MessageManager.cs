@@ -93,7 +93,7 @@ namespace SD.HnD.BL
 			adapter.DeleteEntityCollection(messageAudits);
 
 			// delete all attachments for this message. This can be done directly onto the db.
-			adapter.DeleteEntitiesDirectly(typeof(Attachment),  
+			adapter.DeleteEntitiesDirectly(typeof(AttachmentEntity),  
 										   new RelationPredicateBucket(AttachmentFields.MessageID.In(qf.Create()
 																									   .Select(MessageFields.MessageID)
 																									   .Where(messageFilter))));

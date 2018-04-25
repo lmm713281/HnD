@@ -101,10 +101,12 @@ namespace SD.HnD.BL
             }
 
 			var qf = new QueryFactory();
-			var q = qf.Create();
-			q.Select(ThreadGuiHelper.BuildQueryProjectionForAllThreadsWithStats(qf));
-			q.From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf));
-			q.Where(((ThreadFields.IsSticky == true).Or(ThreadFields.ThreadLastPostingDate >= limiterDate)).And(ThreadFields.ForumID == forumID));
+			var q = qf.Create()
+					  .Select(ThreadGuiHelper.BuildQueryProjectionForAllThreadsWithStats(qf))
+					  .From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf))
+					  .Where(((ThreadFields.IsSticky == true).Or(ThreadFields.ThreadLastPostingDate >= limiterDate))
+							  .And(ThreadFields.ForumID == forumID));
+
 			// if the user can't view threads started by others, filter out threads started by users different from userID
 			if(!canViewNormalThreadsStartedByOthers)
 			{
@@ -125,20 +127,21 @@ namespace SD.HnD.BL
 				{
 					// not enough threads available, fetch again, 
 					// first fetch the sticky threads. 
-					q = qf.Create();
-					q.Select(ThreadGuiHelper.BuildQueryProjectionForAllThreadsWithStats(qf));
-					q.From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf));
-					q.Where((ThreadFields.IsSticky == true).And(ThreadFields.ForumID == forumID));
-					q.OrderBy(ThreadFields.ThreadLastPostingDate.Descending());
+					q = qf.Create()
+							  .Select(ThreadGuiHelper.BuildQueryProjectionForAllThreadsWithStats(qf))
+							  .From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf))
+							  .Where((ThreadFields.IsSticky == true).And(ThreadFields.ForumID == forumID))
+							  .OrderBy(ThreadFields.ThreadLastPostingDate.Descending());
 					threads = adapter.FetchAsDataTable(q);
 
 					// then fetch the rest. Fetch it into the same datatable object to append the rows to the already fetched sticky threads (if any)
-					q = qf.Create();
-					q.Select(ThreadGuiHelper.BuildQueryProjectionForAllThreadsWithStats(qf));
-					q.From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf));
-					q.Where((ThreadFields.IsSticky == false).And(ThreadFields.ForumID == forumID));
-					q.Limit(minNumberOfThreadsToFetch);
-					q.OrderBy(ThreadFields.ThreadLastPostingDate.Descending());
+					q = qf.Create()
+							  .Select(ThreadGuiHelper.BuildQueryProjectionForAllThreadsWithStats(qf))
+							  .From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf))
+							  .Where((ThreadFields.IsSticky == false).And(ThreadFields.ForumID == forumID))
+							  .Limit(minNumberOfThreadsToFetch)
+							  .OrderBy(ThreadFields.ThreadLastPostingDate.Descending())
+							  .CacheResultset(30, "Threads_" + forumID);		// add a tag to this resultset so we can purge it later when a new thread is added. 
 					adapter.FetchAsDataTable(q, threads);
 
 					// sort closed threads to the bottom. Do this in-memory as it's a sort operation after projection. Doing it on the server would mean
@@ -216,42 +219,45 @@ namespace SD.HnD.BL
 
 			var qf = new QueryFactory();
 			var q = qf.Create()
-						.Select(ForumFields.ForumID, 
-								ForumFields.ForumName, 
-								ForumFields.ForumDescription, 
-								ForumFields.ForumLastPostingDate,
-								// add a scalar query which retrieves the # of threads in the specific forum. 
-								// this will result in the query:
-								// (
-								//		SELECT COUNT(ThreadID) FROM Thread 
-								//		WHERE ForumID = Forum.ForumID AND threadfilter. 
-								// ) As AmountThreads
-								qf.Create()
-										.Select(ThreadFields.ThreadID.Count())
-										.CorrelatedOver(ThreadFields.ForumID == ForumFields.ForumID)
-										.Where(threadFilter)
-										.ToScalar().As("AmountThreads"),
-								// add a scalar query which retrieves the # of messages in the threads of this forum. 
-								// this will result in the query:
-								// (
-								//		SELECT COUNT(MessageID) FROM Message 
-								//		WHERE ThreadID IN
-								//		(
-								//			SELECT ThreadID FROM Thread WHERE ForumID = Forum.ForumID AND threadfilter
-								//		)
-								// ) AS AmountMessages
-								qf.Create()
-										.Select(MessageFields.MessageID.Count())
-										.Where(MessageFields.ThreadID.In(
-												qf.Create()
-													.Select(ThreadFields.ThreadID)
-													.CorrelatedOver(ThreadFields.ForumID == ForumFields.ForumID)
-													.Where(threadFilter)))
-										.ToScalar().As("AmountMessages"),
-								ForumFields.HasRSSFeed, 
-								ForumFields.SectionID)
-						.Where(ForumFields.ForumID == accessableForums)
-						.OrderBy(ForumFields.OrderNo.Ascending(), ForumFields.ForumName.Ascending());
+					  .Select(ForumFields.ForumID,
+							  ForumFields.ForumName,
+							  ForumFields.ForumDescription,
+							  ForumFields.ForumLastPostingDate,
+
+							  // add a scalar query which retrieves the # of threads in the specific forum. 
+							  // this will result in the query:
+							  // (
+							  //		SELECT COUNT(ThreadID) FROM Thread 
+							  //		WHERE ForumID = Forum.ForumID AND threadfilter. 
+							  // ) As AmountThreads
+							  qf.Create()
+								.Select(ThreadFields.ThreadID.Count())
+								.CorrelatedOver(ThreadFields.ForumID == ForumFields.ForumID)
+								.Where(threadFilter)
+								.ToScalar().As("AmountThreads"),
+
+							  // add a scalar query which retrieves the # of messages in the threads of this forum. 
+							  // this will result in the query:
+							  // (
+							  //		SELECT COUNT(MessageID) FROM Message 
+							  //		WHERE ThreadID IN
+							  //		(
+							  //			SELECT ThreadID FROM Thread WHERE ForumID = Forum.ForumID AND threadfilter
+							  //		)
+							  // ) AS AmountMessages
+							  qf.Create()
+								.Select(MessageFields.MessageID.Count())
+								.Where(MessageFields.ThreadID.In(
+																 qf.Create()
+																   .Select(ThreadFields.ThreadID)
+																   .CorrelatedOver(ThreadFields.ForumID == ForumFields.ForumID)
+																   .Where(threadFilter)))
+								.ToScalar().As("AmountMessages"),
+							  ForumFields.HasRSSFeed,
+							  ForumFields.SectionID)
+					  .Where(ForumFields.ForumID == accessableForums)
+					  .OrderBy(ForumFields.OrderNo.Ascending(), ForumFields.ForumName.Ascending())
+					  .CacheResultset(30);
 
 			DataTable results;
 			using(var adapter = new DataAccessAdapter())

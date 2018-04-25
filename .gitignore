@@ -10,6 +10,7 @@ TestResults
 
 .vs/
 .idea/
+PrecompiledWeb/
 
 # User-specific files
 *.suo

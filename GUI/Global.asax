@@ -39,6 +39,7 @@
 		// Use static method in BL to fill the Application object with the data which is systemwide
 		// and thus cacheable in the application object.
 		ApplicationAdapter.LoadApplicationObjectCacheData();
+		CacheManager.InitializeResultsetCache(String.Empty, null);
 	}
 
 	

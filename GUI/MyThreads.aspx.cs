@@ -71,9 +71,8 @@ namespace SD.HnD.GUI
 				if(rowCount <= 0)
 				{
 					// reload rowCount
-					rowCount = UserGuiHelper.GetRowCountLastThreadsForUserAsDataView(SessionAdapter.GetForumsWithActionRight(ActionRights.AccessForum),
-						callingUserID, SessionAdapter.GetForumsWithActionRight(ActionRights.ViewNormalThreadsStartedByOthers),
-						callingUserID);
+					rowCount = UserGuiHelper.GetRowCountLastThreadsForUserAsDataView(SessionAdapter.GetForumsWithActionRight(ActionRights.AccessForum), callingUserID, 
+																					 SessionAdapter.GetForumsWithActionRight(ActionRights.ViewNormalThreadsStartedByOthers), callingUserID);
 					SessionAdapter.SetTempResult("MyThreadsRowCount", rowCount);
 				}
 
@@ -102,9 +101,9 @@ namespace SD.HnD.GUI
 				plPageListTop.CurrentPage = currentPage;
 				lblAmountThreads.Text = rowCount.ToString();
 
-				DataView lastThreads = UserGuiHelper.GetLastThreadsForUserAsDataView(SessionAdapter.GetForumsWithActionRight(ActionRights.AccessForum),
-						callingUserID, SessionAdapter.GetForumsWithActionRight(ActionRights.ViewNormalThreadsStartedByOthers),
-						callingUserID, pageSize, currentPage);
+				DataView lastThreads = UserGuiHelper.GetLastThreadsForUserAsDataView(SessionAdapter.GetForumsWithActionRight(ActionRights.AccessForum), callingUserID, 
+																					 SessionAdapter.GetForumsWithActionRight(ActionRights.ViewNormalThreadsStartedByOthers),
+																					 callingUserID, pageSize, currentPage);
 				rpThreads.DataSource = lastThreads;
 				rpThreads.DataBind();
 			}

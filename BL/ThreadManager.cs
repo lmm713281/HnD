@@ -222,6 +222,12 @@ namespace SD.HnD.BL
 			thread.Subject = subject;
 			thread.IsSticky = isSticky;
 			thread.IsClosed = isClosed;
+
+			if(thread.IsDirty)
+			{
+				// purge cached threads for this forum, as properties of the thread have changed so the list has to be updated
+				CacheController.PurgeResultsets("Threads_" + thread.ForumID);
+			}
 			using(var adapter = new DataAccessAdapter())
 			{
 				return adapter.SaveEntity(thread);
@@ -243,6 +249,11 @@ namespace SD.HnD.BL
 				// not found
 				return false;
 			}
+			// purge cached threads for the old forum, as the thread will be removed from that
+			CacheController.PurgeResultsets("Threads_" + thread.ForumID);
+			// purge cached threads for the new forum, as the thread will show up there now
+			CacheController.PurgeResultsets("Threads_" + newForumID);
+
 			thread.ForumID = newForumID;
 			using(var adapter = new DataAccessAdapter())
 			{
