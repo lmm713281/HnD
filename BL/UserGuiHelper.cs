@@ -153,7 +153,7 @@ namespace SD.HnD.BL
 
 		/// <summary>
 		/// Gets the row count for the set of threads in which the user specified participated with one or more messages for the page specified.
-		/// Threads which aren't visible for the calling user are filtered out.
+		/// Threads which aren't visible for the calling user aren't filtered out.
 		/// </summary>
 		/// <param name="accessableForums">A list of accessable forums IDs, which the user calling the method has permission to access.</param>
 		/// <param name="participantUserID">The participant user ID of the user of which the threads have to be obtained.</param>
@@ -169,13 +169,10 @@ namespace SD.HnD.BL
 			}
 			var qf = new QueryFactory();
 			var q = qf.Create()
-							.Select(ThreadFields.ThreadID)
-							.From(ThreadGuiHelper.BuildFromClauseForAllThreadsWithStats(qf))
-							.Where((ThreadFields.ForumID == accessableForums)
-									.And(ThreadFields.ThreadID.In(qf.Create()
-																		.Select(MessageFields.ThreadID)
-																		.Where(MessageFields.PostedByUserID == participantUserID)))
-									.And(ThreadGuiHelper.CreateThreadFilter(forumsWithThreadsFromOthers, callingUserID)));
+					  .Select(ThreadFields.ThreadID)
+					  .From(qf.Thread.InnerJoin(qf.Message).On(ThreadFields.ThreadID.Equal(MessageFields.ThreadID)))
+					  .Where((ThreadFields.ForumID == accessableForums).And(MessageFields.PostedByUserID == participantUserID))
+					  .Distinct();
 			using(var adapter = new DataAccessAdapter())
 			{
 				return adapter.FetchScalar<int>(qf.Create().Select(Functions.CountRow()).From(q));
