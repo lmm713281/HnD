@@ -22,6 +22,7 @@ using System.Text;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace SD.HnD.Utility
 {
@@ -115,8 +116,7 @@ namespace SD.HnD.Utility
 		/// <param name="emailData">The email data.</param>
 		/// <param name="sendAsynchronically">if set to true, the email will be send asynchronically otherwise synchronically</param>
 		/// <returns>true if email sent, otherwise false</returns>
-		public static bool SendEmail(string subject, string message, string fromAddress, string[] toEmailAddresses, 
-				Dictionary<string, string> emailData, bool sendAsynchronically)
+		public static bool SendEmail(string subject, string message, string fromAddress, string[] toEmailAddresses, Dictionary<string, string> emailData, bool sendAsynchronically)
 		{
 			string defaultToMailAddress = string.Empty;
 			emailData.TryGetValue("defaultToEmailAddress", out defaultToMailAddress);
@@ -138,7 +138,12 @@ namespace SD.HnD.Utility
 			if(sendAsynchronically)
 			{
 				// send email asynchronously.
-				client.SendAsync(messageToSend, null);
+				client.SendCompleted += (sender, error) =>
+										{
+											client.Dispose();
+											messageToSend.Dispose();
+										};
+				ThreadPool.QueueUserWorkItem(o => client.SendAsync(messageToSend, null));
 			}
 			else
 			{
