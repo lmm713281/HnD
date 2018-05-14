@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="CloseThread.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.CloseThread" ValidateRequest="false" Async="true"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.CloseThread" ValidateRequest="false" Async="true" Codebehind="CloseThread.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="MessageEditor" Src="MessageEditor.ascx"%>

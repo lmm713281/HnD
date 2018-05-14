@@ -1,1 +1,1 @@
-<%@ Page language="c#" CodeFile="SearchUnAttended.aspx.cs" AutoEventWireup="true" Inherits="SD.HnD.GUI.SearchUnAttended" %>
+<%@ Page language="c#" AutoEventWireup="true" Inherits="SD.HnD.GUI.SearchUnAttended" Codebehind="SearchUnAttended.aspx.cs" %>

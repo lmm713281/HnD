@@ -1,6 +1,6 @@
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="HeaderRestrictedMenu.ascx"%>
-<%@ Page language="c#" CodeFile="Help.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Help" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Help" Codebehind="Help.aspx.cs" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <html>
   <head runat="server">

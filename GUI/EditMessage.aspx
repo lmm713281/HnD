@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="EditMessage.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.EditMessage" ValidateRequest="false"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.EditMessage" ValidateRequest="false" Codebehind="EditMessage.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="MessageEditor" Src="MessageEditor.ascx"%>

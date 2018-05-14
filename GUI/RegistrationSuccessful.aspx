@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="RegistrationSuccessful.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.RegistrationSuccessful" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.RegistrationSuccessful" Codebehind="RegistrationSuccessful.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="HeaderRestrictedMenu.ascx"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >

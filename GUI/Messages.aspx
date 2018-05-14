@@ -1,5 +1,5 @@
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
-<%@ Page language="c#" CodeFile="Messages.aspx.cs" AutoEventWireup="true" Inherits="SD.HnD.GUI.Messages"%>
+<%@ Page language="c#" AutoEventWireup="true" Inherits="SD.HnD.GUI.Messages" Codebehind="Messages.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageList" Src="PageList.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Import namespace="System.Web" %>

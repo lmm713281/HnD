@@ -1,4 +1,4 @@
-<%@ Control Language="c#" AutoEventWireup="false" CodeFile="Footer.ascx.cs" Inherits="SD.HnD.GUI.Footer" TargetSchema="http://schemas.microsoft.com/intellisense/ie5"%>
+<%@ Control Language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Footer" TargetSchema="http://schemas.microsoft.com/intellisense/ie5" Codebehind="Footer.ascx.cs" %>
 <%@ Import namespace="SD.HnD.BL" %>
 <table width="760" align="center" border="0" cellpadding="1" cellspacing="1">
 <tr>

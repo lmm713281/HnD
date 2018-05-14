@@ -1,4 +1,4 @@
-<%@ Control Language="c#" AutoEventWireup="false" CodeFile="MessageEditor.ascx.cs" Inherits="SD.HnD.GUI.MessageEditor" TargetSchema="http://schemas.microsoft.com/intellisense/ie5"%>
+<%@ Control Language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.MessageEditor" TargetSchema="http://schemas.microsoft.com/intellisense/ie5" Codebehind="MessageEditor.ascx.cs" %>
 <script language="javascript">
 	// browser checkers
 	var iClientVersion = parseInt(navigator.appVersion); 

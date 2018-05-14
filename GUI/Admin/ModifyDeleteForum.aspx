@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="ModifyDeleteForum.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ModifyDeleteForum" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Modify / Delete a forum"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ModifyDeleteForum" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Modify / Delete a forum" Codebehind="ModifyDeleteForum.aspx.cs" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
 <table width="700" align="center" class="ExplanationBox" cellpadding="2" cellspacing="0">

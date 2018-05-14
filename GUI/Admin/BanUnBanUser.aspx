@@ -1,5 +1,5 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="BanUnBanUser.aspx.cs" Inherits="SD.HnD.GUI.Admin.BanUnbanUser" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Ban/unban a user"%>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="SD.HnD.GUI.Admin.BanUnbanUser" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Ban/unban a user" Codebehind="BanUnBanUser.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="FindUser" Src="FindUser.ascx"%>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">

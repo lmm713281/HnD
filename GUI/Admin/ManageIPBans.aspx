@@ -1,5 +1,5 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ManageIPBans.aspx.cs" Inherits="SD.HnD.GUI.Admin.ManageIPBans" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Manage IP bans"%>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="SD.HnD.GUI.Admin.ManageIPBans" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Manage IP bans" Codebehind="ManageIPBans.aspx.cs" %>
 <%@ Register Assembly="SD.LLBLGen.Pro.ORMSupportClasses.Web" Namespace="SD.LLBLGen.Pro.ORMSupportClasses" TagPrefix="llblgenpro" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">

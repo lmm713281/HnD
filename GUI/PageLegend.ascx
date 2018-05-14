@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeFile="PageLegend.ascx.cs" Inherits="SD.HnD.GUI.PageLegend" %>
+<%@ Control Language="C#" AutoEventWireup="true" Inherits="SD.HnD.GUI.PageLegend" Codebehind="PageLegend.ascx.cs" %>
 <br clear="all"/>
 <table width="750" align="center" border="0" cellpadding="1" cellspacing="0" class="LegendBox">
 <tr>

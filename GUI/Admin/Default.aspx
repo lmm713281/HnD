@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="Default.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin._Default" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate your forumsystem"  %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin._Default" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate your forumsystem"  Codebehind="Default.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="../Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
 

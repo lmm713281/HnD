@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="DeleteSection.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.DeleteSection" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Delete a section"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.DeleteSection" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Delete a section" Codebehind="DeleteSection.aspx.cs" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
 <table cellSpacing="0" cellPadding="2" width="700" align="center" class="ExplanationBox">

@@ -1,4 +1,4 @@
-<%@ Control Language="c#" AutoEventWireup="true" CodeFile="HeaderRestrictedMenu.ascx.cs" Inherits="SD.HnD.GUI.HeaderRestrictedMenu" %>
+<%@ Control Language="c#" AutoEventWireup="true" Inherits="SD.HnD.GUI.HeaderRestrictedMenu" Codebehind="HeaderRestrictedMenu.ascx.cs" %>
 <tr>
 	<td>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">

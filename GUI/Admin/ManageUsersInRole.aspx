@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="ManageUsersInRole.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ManageUsersInRole" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Manage users in role"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ManageUsersInRole" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Manage users in role" Codebehind="ManageUsersInRole.aspx.cs" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
 <table width="700" align="center" class="ExplanationBox" cellpadding="2" cellspacing="0">

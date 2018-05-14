@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="ModifyUserProfile.aspx.cs" AutoEventWireup="true" Inherits="SD.HnD.GUI.Admin.ModifyUserProfile" ValidateRequest="false" 
-	MasterPageFile="~/Admin/AdminMaster.master" title="HnD::Administrate::Modify a user profile"%>
+<%@ Page language="c#" AutoEventWireup="true" Inherits="SD.HnD.GUI.Admin.ModifyUserProfile" ValidateRequest="false" 
+	MasterPageFile="~/Admin/AdminMaster.master" title="HnD::Administrate::Modify a user profile" Codebehind="ModifyUserProfile.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="FindUser" Src="FindUser.ascx"%>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">

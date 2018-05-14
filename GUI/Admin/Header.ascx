@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeFile="Header.ascx.cs" Inherits="SD.HnD.GUI.Admin.Header" ClassName="Header" %>
+<%@ Control Language="C#" AutoEventWireup="true" Inherits="SD.HnD.GUI.Admin.Header" ClassName="Header" Codebehind="Header.ascx.cs" %>
 <table width="700" align="center" border="0" cellpadding="0" cellspacing="0">
 <tr>
 	<td>

@@ -1,7 +1,7 @@
 <%@ Register TagPrefix="HnD" TagName="MessageEditor" Src="MessageEditor.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
-<%@ Page language="c#" CodeFile="EditMemoForThread.aspx.cs" AutoEventWireup="false" ValidateRequest="false" Inherits="SD.HnD.GUI.EditMemoForThread" %>
+<%@ Page language="c#" AutoEventWireup="false" ValidateRequest="false" Inherits="SD.HnD.GUI.EditMemoForThread" Codebehind="EditMemoForThread.aspx.cs" %>
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en" >
 <html>
   <head runat="server">

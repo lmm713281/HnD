@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="Rssforum.aspx.cs" ContentType="text/xml" AutoEventWireup="true" Inherits="SD.HnD.GUI.Rssforum" %>
+<%@ Page language="c#" ContentType="text/xml" AutoEventWireup="true" Inherits="SD.HnD.GUI.Rssforum" Codebehind="Rssforum.aspx.cs" %>
 <rss version="2.0">
 <channel>
     <title><%=HttpUtility.HtmlEncode(base.SiteName)%> <%=HttpUtility.HtmlEncode(base.ForumName)%> feed</title>

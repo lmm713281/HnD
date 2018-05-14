@@ -1,0 +1,982 @@
+﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7DC343CC-C425-4F60-A0EC-B7453724BA4C}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SD.HnD.GUI</RootNamespace>
+    <AssemblyName>SD.HnD.GUI</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses, Version=5.3.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+      <HintPath>..\packages\SD.LLBLGen.Pro.ORMSupportClasses.5.3.5\lib\net452\SD.LLBLGen.Pro.ORMSupportClasses.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses.Web, Version=5.3.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+      <HintPath>..\packages\SD.LLBLGen.Pro.ORMSupportClasses.Web.5.3.5\lib\net35\SD.LLBLGen.Pro.ORMSupportClasses.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.Tools.Algorithmia, Version=1.1.0.0, Culture=neutral, PublicKeyToken=8ede9265bbb8e107, processorArchitecture=MSIL">
+      <HintPath>..\packages\SD.Tools.Algorithmia.1.1.0\lib\SD.Tools.Algorithmia.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.Tools.BCLExtensions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a3f87088dcb994e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SD.Tools.BCLExtensions.1.0.0\lib\SD.Tools.BCLExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.Tools.OrmProfiler.Interceptor.NET45, Version=1.5.0.0, Culture=neutral, PublicKeyToken=f175dc08f093a9ae, processorArchitecture=MSIL">
+      <HintPath>..\packages\SD.Tools.OrmProfiler.Interceptor.NET45.1.5.20150715\lib\net45\SD.Tools.OrmProfiler.Interceptor.NET45.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.Tools.OrmProfiler.Shared, Version=1.5.0.0, Culture=neutral, PublicKeyToken=f175dc08f093a9ae, processorArchitecture=MSIL">
+      <HintPath>..\packages\SD.Tools.OrmProfiler.Interceptor.NET45.1.5.20150715\lib\net45\SD.Tools.OrmProfiler.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ActiveThreads.aspx" />
+    <Content Include="Admin\AddForum.aspx" />
+    <Content Include="Admin\AddRole.aspx" />
+    <Content Include="Admin\AddSection.aspx" />
+    <Content Include="Admin\AddUsersToRole.aspx" />
+    <Content Include="Admin\BanUnBanUser.aspx" />
+    <Content Include="Admin\Default.aspx" />
+    <Content Include="Admin\DeleteForum.aspx" />
+    <Content Include="Admin\DeleteRole.aspx" />
+    <Content Include="Admin\DeleteSection.aspx" />
+    <Content Include="Admin\DeleteUser.aspx" />
+    <Content Include="Admin\FindUser.ascx" />
+    <Content Include="Admin\Header.ascx" />
+    <Content Include="Admin\ManageAuditActionsPerRole.aspx" />
+    <Content Include="Admin\ManageForumRights.aspx" />
+    <Content Include="Admin\ManageIPBans.aspx" />
+    <Content Include="Admin\ManageRoleForumRights.aspx" />
+    <Content Include="Admin\ManageSupportQueues.aspx" />
+    <Content Include="Admin\ManageUsersInRole.aspx" />
+    <Content Include="Admin\ModifyDeleteForum.aspx" />
+    <Content Include="Admin\ModifyDeleteRole.aspx" />
+    <Content Include="Admin\ModifyDeleteSection.aspx" />
+    <Content Include="Admin\ModifyForum.aspx" />
+    <Content Include="Admin\ModifyRole.aspx" />
+    <Content Include="Admin\ModifySection.aspx" />
+    <Content Include="Admin\ModifySystemParameters.aspx" />
+    <Content Include="Admin\ModifyUserProfile.aspx" />
+    <Content Include="Admin\RemoveUsersFromRole.aspx" />
+    <Content Include="Admin\Reparser.aspx" />
+    <Content Include="Admin\SendEmail.aspx" />
+    <Content Include="Admin\ViewAuditInfo.aspx" />
+    <Content Include="ApproveAttachments.aspx" />
+    <Content Include="App_Data\Noise.txt" />
+    <Content Include="App_Data\ubb_message.xsl" />
+    <Content Include="App_Data\ubb_signature.xsl" />
+    <Content Include="App_Themes\BlueAndGrey\main.css" />
+    <Content Include="App_Themes\BlueAndGrey\pics\background_explanationbox.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\background_header_bottom.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\background_header_top.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\background_page.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\background_supportarea_1line.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\background_tablehd_1line.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\background_tablehd_2line.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_bookmark.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_close.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_collapse.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_delete.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_done.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_done_small.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_expand.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_move.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_notdone.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_notdone_small.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_print.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_properties.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_rss.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_subscribetothread.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_unbookmark.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\button_unsubscribefromthread.gif" />
+    <Content Include="App_Themes\BlueAndGrey\pics\HnDLogo.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_newposts.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_newposts_alt.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_newposts_legenda.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_newposts_locked.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_newposts_locked_alt.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_newposts_locked_legenda.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_newposts_sticky.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_newposts_sticky_alt.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_newposts_sticky_legenda.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_nonewposts.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_nonewposts_alt.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_nonewposts_legenda.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_nonewposts_locked.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_nonewposts_locked_alt.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_nonewposts_locked_legenda.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_nonewposts_sticky.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_nonewposts_sticky_alt.jpg" />
+    <Content Include="App_Themes\BlueAndGrey\pics\icon_nonewposts_sticky_legenda.jpg" />
+    <Content Include="App_Themes\Hnd\main.css" />
+    <Content Include="App_Themes\Hnd\pics\background_explanationbox.gif" />
+    <Content Include="App_Themes\Hnd\pics\background_header_top.jpg" />
+    <Content Include="App_Themes\Hnd\pics\background_page.gif" />
+    <Content Include="App_Themes\Hnd\pics\background_supportarea_1line.gif" />
+    <Content Include="App_Themes\Hnd\pics\background_tablehd_1line.gif" />
+    <Content Include="App_Themes\Hnd\pics\background_tablehd_2line.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_bookmark.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_close.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_collapse.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_delete.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_done.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_done_small.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_expand.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_move.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_notdone.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_notdone_small.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_print.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_properties.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_rss.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_subscribetothread.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_unbookmark.gif" />
+    <Content Include="App_Themes\Hnd\pics\button_unsubscribefromthread.gif" />
+    <Content Include="App_Themes\Hnd\pics\HnDLogo.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_newposts.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_newposts_alt.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_newposts_legenda.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_newposts_locked.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_newposts_locked_alt.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_newposts_locked_legenda.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_newposts_sticky.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_newposts_sticky_alt.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_newposts_sticky_legenda.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_nonewposts.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_nonewposts_alt.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_nonewposts_legenda.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_nonewposts_locked.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_nonewposts_locked_alt.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_nonewposts_locked_legenda.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_nonewposts_sticky.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_nonewposts_sticky_alt.jpg" />
+    <Content Include="App_Themes\Hnd\pics\icon_nonewposts_sticky_legenda.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\main.css" />
+    <Content Include="App_Themes\LLBLGenPro\pics\background_explanationbox.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\background_header_bottom.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\background_header_top.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\background_page.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\background_supportarea_1line.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\background_tablehd_1line.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\background_tablehd_2line.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_bookmark.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_close.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_collapse.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_delete.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_done.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_done_small.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_expand.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_move.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_notdone.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_notdone_small.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_print.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_properties.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_rss.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_subscribetothread.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_unbookmark.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\button_unsubscribefromthread.gif" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_newposts.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_newposts_alt.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_newposts_legenda.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_newposts_locked.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_newposts_locked_alt.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_newposts_locked_legenda.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_newposts_sticky.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_newposts_sticky_alt.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_newposts_sticky_legenda.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_nonewposts.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_nonewposts_alt.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_nonewposts_legenda.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_nonewposts_locked.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_nonewposts_locked_alt.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_nonewposts_locked_legenda.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_nonewposts_sticky.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_nonewposts_sticky_alt.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\icon_nonewposts_sticky_legenda.jpg" />
+    <Content Include="App_Themes\LLBLGenPro\pics\LLBLGenProLogo.jpg" />
+    <Content Include="App_Themes\ORMProfiler\main.css" />
+    <Content Include="App_Themes\ORMProfiler\pics\background_explanationbox.gif" />
+    <Content Include="App_Themes\ORMProfiler\pics\background_header_bottom.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\background_header_top.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\background_page.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\background_supportarea_1line.gif" />
+    <Content Include="App_Themes\ORMProfiler\pics\background_tablehd_1line.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\background_tablehd_2line.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_bookmark.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_close.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_collapse.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_delete.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_done.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_done_small.gif" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_expand.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_move.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_notdone.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_notdone_small.gif" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_print.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_properties.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_rss.gif" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_subscribetothread.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_unbookmark.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\button_unsubscribefromthread.png" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_newposts.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_newposts_alt.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_newposts_legenda.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_newposts_locked.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_newposts_locked_alt.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_newposts_locked_legenda.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_newposts_sticky.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_newposts_sticky_alt.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_newposts_sticky_legenda.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_nonewposts.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_nonewposts_alt.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_nonewposts_legenda.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_nonewposts_locked.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_nonewposts_locked_alt.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_nonewposts_locked_legenda.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_nonewposts_sticky.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_nonewposts_sticky_alt.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\icon_nonewposts_sticky_legenda.jpg" />
+    <Content Include="App_Themes\ORMProfiler\pics\ORMProfilerLogo.png" />
+    <Content Include="Attachments.aspx" />
+    <Content Include="Bookmarks.aspx" />
+    <Content Include="CloseThread.aspx" />
+    <Content Include="CREDITS.txt" />
+    <Content Include="Default.aspx" />
+    <Content Include="DeleteMessage.aspx" />
+    <Content Include="DeleteThread.aspx" />
+    <Content Include="EditMemoForThread.aspx" />
+    <Content Include="EditMessage.aspx" />
+    <Content Include="EditProfile.aspx" />
+    <Content Include="EditProfileSuccessful.aspx" />
+    <Content Include="EditThreadProperties.aspx" />
+    <Content Include="FileStreamer.aspx" />
+    <Content Include="Footer.ascx" />
+    <Content Include="Global.asax" />
+    <Content Include="GotoMessage.aspx" />
+    <Content Include="Header.ascx" />
+    <Content Include="HeaderRestrictedMenu.ascx" />
+    <Content Include="Help.aspx" />
+    <Content Include="IgnoredSearchWords.aspx" />
+    <Content Include="IPBanViewer.aspx" />
+    <Content Include="js\searchhi.js" />
+    <Content Include="LICENSE.txt" />
+    <Content Include="Login.aspx" />
+    <Content Include="Logout.aspx" />
+    <Content Include="MessageEditor.ascx" />
+    <Content Include="Messages.aspx" />
+    <Content Include="MoveThread.aspx" />
+    <Content Include="MyThreads.aspx" />
+    <Content Include="MyThreadsPageList.ascx" />
+    <Content Include="NewMessage.aspx" />
+    <Content Include="NewThread.aspx" />
+    <Content Include="PageLegend.ascx" />
+    <Content Include="PageList.ascx" />
+    <Content Include="pics\attachment.gif" />
+    <Content Include="pics\attachmentadd.gif" />
+    <Content Include="pics\separator.gif" />
+    <Content Include="pics\smileyangry.gif" />
+    <Content Include="pics\smileyconfused.gif" />
+    <Content Include="pics\smileycool.gif" />
+    <Content Include="pics\smileydissapointed.gif" />
+    <Content Include="pics\smileyembarrassed.gif" />
+    <Content Include="pics\smileylaugh.gif" />
+    <Content Include="pics\smileyregular.gif" />
+    <Content Include="pics\smileysad.gif" />
+    <Content Include="pics\smileyshocked.gif" />
+    <Content Include="pics\smileytongue.gif" />
+    <Content Include="pics\smileywink.gif" />
+    <Content Include="PrintMessages.aspx" />
+    <Content Include="Profile.aspx" />
+    <Content Include="Register.aspx" />
+    <Content Include="RegistrationRules.aspx" />
+    <Content Include="RegistrationSuccessful.aspx" />
+    <Content Include="ResetPassword.aspx" />
+    <Content Include="ResetPasswordSuccessful.aspx" />
+    <Content Include="Rssforum.aspx" />
+    <Content Include="Search.aspx" />
+    <Content Include="SearchResultPageList.ascx" />
+    <Content Include="SearchResults.aspx" />
+    <Content Include="SearchUnAttended.aspx" />
+    <Content Include="SupportQueues.aspx" />
+    <Content Include="Threads.aspx" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActiveThreads.aspx.cs">
+      <DependentUpon>ActiveThreads.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ActiveThreads.aspx.designer.cs">
+      <DependentUpon>ActiveThreads.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\AddForum.aspx.cs">
+      <DependentUpon>AddForum.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\AddForum.aspx.designer.cs">
+      <DependentUpon>AddForum.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\AddRole.aspx.cs">
+      <DependentUpon>AddRole.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\AddRole.aspx.designer.cs">
+      <DependentUpon>AddRole.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\AddSection.aspx.cs">
+      <DependentUpon>AddSection.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\AddSection.aspx.designer.cs">
+      <DependentUpon>AddSection.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\AddUsersToRole.aspx.cs">
+      <DependentUpon>AddUsersToRole.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\AddUsersToRole.aspx.designer.cs">
+      <DependentUpon>AddUsersToRole.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\AdminMaster.master.cs">
+      <DependentUpon>AdminMaster.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\AdminMaster.master.designer.cs">
+      <DependentUpon>AdminMaster.master</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\BanUnBanUser.aspx.cs">
+      <DependentUpon>BanUnBanUser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\BanUnBanUser.aspx.designer.cs">
+      <DependentUpon>BanUnBanUser.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\DeleteForum.aspx.cs">
+      <DependentUpon>DeleteForum.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\DeleteForum.aspx.designer.cs">
+      <DependentUpon>DeleteForum.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\DeleteRole.aspx.cs">
+      <DependentUpon>DeleteRole.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\DeleteRole.aspx.designer.cs">
+      <DependentUpon>DeleteRole.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\DeleteSection.aspx.cs">
+      <DependentUpon>DeleteSection.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\DeleteSection.aspx.designer.cs">
+      <DependentUpon>DeleteSection.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\DeleteUser.aspx.cs">
+      <DependentUpon>DeleteUser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\DeleteUser.aspx.designer.cs">
+      <DependentUpon>DeleteUser.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\FindUser.ascx.cs">
+      <DependentUpon>FindUser.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\FindUser.ascx.designer.cs">
+      <DependentUpon>FindUser.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Header.ascx.cs">
+      <DependentUpon>Header.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Header.ascx.designer.cs">
+      <DependentUpon>Header.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ManageAuditActionsPerRole.aspx.cs">
+      <DependentUpon>ManageAuditActionsPerRole.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ManageAuditActionsPerRole.aspx.designer.cs">
+      <DependentUpon>ManageAuditActionsPerRole.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ManageForumRights.aspx.cs">
+      <DependentUpon>ManageForumRights.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ManageForumRights.aspx.designer.cs">
+      <DependentUpon>ManageForumRights.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ManageIPBans.aspx.cs">
+      <DependentUpon>ManageIPBans.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ManageIPBans.aspx.designer.cs">
+      <DependentUpon>ManageIPBans.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ManageRoleForumRights.aspx.cs">
+      <DependentUpon>ManageRoleForumRights.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ManageRoleForumRights.aspx.designer.cs">
+      <DependentUpon>ManageRoleForumRights.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ManageSupportQueues.aspx.cs">
+      <DependentUpon>ManageSupportQueues.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ManageSupportQueues.aspx.designer.cs">
+      <DependentUpon>ManageSupportQueues.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ManageUsersInRole.aspx.cs">
+      <DependentUpon>ManageUsersInRole.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ManageUsersInRole.aspx.designer.cs">
+      <DependentUpon>ManageUsersInRole.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ModifyDeleteForum.aspx.cs">
+      <DependentUpon>ModifyDeleteForum.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ModifyDeleteForum.aspx.designer.cs">
+      <DependentUpon>ModifyDeleteForum.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ModifyDeleteRole.aspx.cs">
+      <DependentUpon>ModifyDeleteRole.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ModifyDeleteRole.aspx.designer.cs">
+      <DependentUpon>ModifyDeleteRole.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ModifyDeleteSection.aspx.cs">
+      <DependentUpon>ModifyDeleteSection.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ModifyDeleteSection.aspx.designer.cs">
+      <DependentUpon>ModifyDeleteSection.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ModifyForum.aspx.cs">
+      <DependentUpon>ModifyForum.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ModifyForum.aspx.designer.cs">
+      <DependentUpon>ModifyForum.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ModifyRole.aspx.cs">
+      <DependentUpon>ModifyRole.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ModifyRole.aspx.designer.cs">
+      <DependentUpon>ModifyRole.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ModifySection.aspx.cs">
+      <DependentUpon>ModifySection.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ModifySection.aspx.designer.cs">
+      <DependentUpon>ModifySection.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ModifySystemParameters.aspx.cs">
+      <DependentUpon>ModifySystemParameters.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ModifySystemParameters.aspx.designer.cs">
+      <DependentUpon>ModifySystemParameters.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ModifyUserProfile.aspx.cs">
+      <DependentUpon>ModifyUserProfile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ModifyUserProfile.aspx.designer.cs">
+      <DependentUpon>ModifyUserProfile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\RemoveUsersFromRole.aspx.cs">
+      <DependentUpon>RemoveUsersFromRole.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\RemoveUsersFromRole.aspx.designer.cs">
+      <DependentUpon>RemoveUsersFromRole.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Reparser.aspx.cs">
+      <DependentUpon>Reparser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Reparser.aspx.designer.cs">
+      <DependentUpon>Reparser.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\SendEmail.aspx.cs">
+      <DependentUpon>SendEmail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\SendEmail.aspx.designer.cs">
+      <DependentUpon>SendEmail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\ViewAuditInfo.aspx.cs">
+      <DependentUpon>ViewAuditInfo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\ViewAuditInfo.aspx.designer.cs">
+      <DependentUpon>ViewAuditInfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ApproveAttachments.aspx.designer.cs">
+      <DependentUpon>ApproveAttachments.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Attachments.aspx.designer.cs">
+      <DependentUpon>Attachments.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Bookmarks.aspx.designer.cs">
+      <DependentUpon>Bookmarks.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CloseThread.aspx.designer.cs">
+      <DependentUpon>CloseThread.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DeleteMessage.aspx.designer.cs">
+      <DependentUpon>DeleteMessage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DeleteThread.aspx.designer.cs">
+      <DependentUpon>DeleteThread.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EditMemoForThread.aspx.designer.cs">
+      <DependentUpon>EditMemoForThread.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EditMessage.aspx.designer.cs">
+      <DependentUpon>EditMessage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EditProfile.aspx.designer.cs">
+      <DependentUpon>EditProfile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EditProfileSuccessful.aspx.designer.cs">
+      <DependentUpon>EditProfileSuccessful.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EditThreadProperties.aspx.designer.cs">
+      <DependentUpon>EditThreadProperties.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FileStreamer.aspx.designer.cs">
+      <DependentUpon>FileStreamer.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Footer.ascx.designer.cs">
+      <DependentUpon>Footer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="GotoMessage.aspx.designer.cs">
+      <DependentUpon>GotoMessage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Header.ascx.designer.cs">
+      <DependentUpon>Header.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HeaderRestrictedMenu.ascx.designer.cs">
+      <DependentUpon>HeaderRestrictedMenu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Help.aspx.designer.cs">
+      <DependentUpon>Help.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IgnoredSearchWords.aspx.designer.cs">
+      <DependentUpon>IgnoredSearchWords.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IPBanViewer.aspx.designer.cs">
+      <DependentUpon>IPBanViewer.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Logout.aspx.designer.cs">
+      <DependentUpon>Logout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MessageEditor.ascx.designer.cs">
+      <DependentUpon>MessageEditor.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Messages.aspx.designer.cs">
+      <DependentUpon>Messages.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MoveThread.aspx.designer.cs">
+      <DependentUpon>MoveThread.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MyThreads.aspx.designer.cs">
+      <DependentUpon>MyThreads.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MyThreadsPageList.ascx.designer.cs">
+      <DependentUpon>MyThreadsPageList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="NewMessage.aspx.designer.cs">
+      <DependentUpon>NewMessage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NewThread.aspx.designer.cs">
+      <DependentUpon>NewThread.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PageLegend.ascx.designer.cs">
+      <DependentUpon>PageLegend.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="PageList.ascx.designer.cs">
+      <DependentUpon>PageList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="PrintMessages.aspx.designer.cs">
+      <DependentUpon>PrintMessages.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Profile.aspx.designer.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Register.aspx.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Register.aspx.designer.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="RegistrationRules.aspx.cs">
+      <DependentUpon>RegistrationRules.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RegistrationRules.aspx.designer.cs">
+      <DependentUpon>RegistrationRules.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="RegistrationSuccessful.aspx.cs">
+      <DependentUpon>RegistrationSuccessful.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RegistrationSuccessful.aspx.designer.cs">
+      <DependentUpon>RegistrationSuccessful.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ResetPassword.aspx.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ResetPassword.aspx.designer.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ResetPasswordSuccessful.aspx.cs">
+      <DependentUpon>ResetPasswordSuccessful.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ResetPasswordSuccessful.aspx.designer.cs">
+      <DependentUpon>ResetPasswordSuccessful.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Rssforum.aspx.cs">
+      <DependentUpon>Rssforum.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Rssforum.aspx.designer.cs">
+      <DependentUpon>Rssforum.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Search.aspx.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search.aspx.designer.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SearchResultPageList.ascx.cs">
+      <DependentUpon>SearchResultPageList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchResultPageList.ascx.designer.cs">
+      <DependentUpon>SearchResultPageList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SearchResults.aspx.cs">
+      <DependentUpon>SearchResults.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchResults.aspx.designer.cs">
+      <DependentUpon>SearchResults.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SearchUnAttended.aspx.cs">
+      <DependentUpon>SearchUnAttended.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchUnAttended.aspx.designer.cs">
+      <DependentUpon>SearchUnAttended.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SupportQueues.aspx.cs">
+      <DependentUpon>SupportQueues.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SupportQueues.aspx.designer.cs">
+      <DependentUpon>SupportQueues.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Threads.aspx.cs">
+      <DependentUpon>Threads.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SupportCode\ApplicationAdapter.cs" />
+    <Compile Include="SupportCode\CacheKeyStore.cs" />
+    <Compile Include="SupportCode\CacheManager.cs" />
+    <Compile Include="SupportCode\MemoryCachedResultsetCache.cs" />
+    <Compile Include="SupportCode\SessionAdapter.cs" />
+    <Compile Include="ApproveAttachments.aspx.cs">
+      <DependentUpon>ApproveAttachments.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Attachments.aspx.cs">
+      <DependentUpon>Attachments.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Bookmarks.aspx.cs">
+      <DependentUpon>Bookmarks.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CloseThread.aspx.cs">
+      <DependentUpon>CloseThread.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DeleteMessage.aspx.cs">
+      <DependentUpon>DeleteMessage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DeleteThread.aspx.cs">
+      <DependentUpon>DeleteThread.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditMemoForThread.aspx.cs">
+      <DependentUpon>EditMemoForThread.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditMessage.aspx.cs">
+      <DependentUpon>EditMessage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditProfile.aspx.cs">
+      <DependentUpon>EditProfile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditProfileSuccessful.aspx.cs">
+      <DependentUpon>EditProfileSuccessful.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditThreadProperties.aspx.cs">
+      <DependentUpon>EditThreadProperties.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FileStreamer.aspx.cs">
+      <DependentUpon>FileStreamer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Footer.ascx.cs">
+      <DependentUpon>Footer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GotoMessage.aspx.cs">
+      <DependentUpon>GotoMessage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Header.ascx.cs">
+      <DependentUpon>Header.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HeaderRestrictedMenu.ascx.cs">
+      <DependentUpon>HeaderRestrictedMenu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Help.aspx.cs">
+      <DependentUpon>Help.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IgnoredSearchWords.aspx.cs">
+      <DependentUpon>IgnoredSearchWords.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IPBanViewer.aspx.cs">
+      <DependentUpon>IPBanViewer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Logout.aspx.cs">
+      <DependentUpon>Logout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MessageEditor.ascx.cs">
+      <DependentUpon>MessageEditor.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Messages.aspx.cs">
+      <DependentUpon>Messages.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MoveThread.aspx.cs">
+      <DependentUpon>MoveThread.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MyThreads.aspx.cs">
+      <DependentUpon>MyThreads.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MyThreadsPageList.ascx.cs">
+      <DependentUpon>MyThreadsPageList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NewMessage.aspx.cs">
+      <DependentUpon>NewMessage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NewThread.aspx.cs">
+      <DependentUpon>NewThread.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PageLegend.ascx.cs">
+      <DependentUpon>PageLegend.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PageList.ascx.cs">
+      <DependentUpon>PageList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PrintMessages.aspx.cs">
+      <DependentUpon>PrintMessages.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Profile.aspx.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Threads.aspx.designer.cs">
+      <DependentUpon>Threads.aspx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Admin\AdminMaster.master" />
+    <Content Include="App_Data\CollapseExpandScript.template" />
+    <Content Include="App_Data\RegistrationReplyMail.template" />
+    <Content Include="App_Data\ThreadUpdatedNotification.template" />
+    <Content Include="App_Themes\BlueAndGrey\main.skin" />
+    <Content Include="App_Themes\Hnd\main.skin" />
+    <Content Include="App_Themes\LLBLGenPro\main.skin" />
+    <Content Include="App_Themes\ORMProfiler\main.skin" />
+    <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BL\SD.HnD.BL.csproj">
+      <Project>{dcf9e35b-d377-4b8c-a0bb-d31cd6a7ec1a}</Project>
+      <Name>SD.HnD.BL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DALAdapter\SD.HnD.DAL.csproj">
+      <Project>{d90c3ee7-d858-4bde-879e-02ebd825e441}</Project>
+      <Name>SD.HnD.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DALAdapter\SD.HnD.DALDBSpecific.csproj">
+      <Project>{c2f065fb-3317-4d77-94a3-6bf445651c9d}</Project>
+      <Name>SD.HnD.DALDBSpecific</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utility\SD.HnD.Utility.csproj">
+      <Project>{aaeb0829-9929-4706-b7fb-f4e8bfcc32c2}</Project>
+      <Name>SD.HnD.Utility</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>62449</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:62446/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="Reparser.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.Reparser" 
-	MasterPageFile="~/Admin/AdminMaster.master" title="HnD::Administrate::MessageReparser"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.Reparser" 
+	MasterPageFile="~/Admin/AdminMaster.master" title="HnD::Administrate::MessageReparser" Codebehind="Reparser.aspx.cs" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
 <table width="700" align="center" border="0" cellpadding="2" cellspacing="0">

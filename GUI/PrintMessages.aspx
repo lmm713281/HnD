@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="PrintMessages.aspx.cs" AutoEventWireup="true" Inherits="SD.HnD.GUI.PrintMessages"%>
+<%@ Page language="c#" AutoEventWireup="true" Inherits="SD.HnD.GUI.PrintMessages" Codebehind="PrintMessages.aspx.cs" %>
 <%@ Import namespace="System.Web" %>
 <%@ Import namespace="System.Data" %>
 <%@ Import Namespace="SD.HnD.GUI" %>

@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="Profile.aspx.cs" AutoEventWireup="true" Inherits="SD.HnD.GUI._Profile" ValidateRequest="false" %>
+<%@ Page language="c#" AutoEventWireup="true" Inherits="SD.HnD.GUI._Profile" ValidateRequest="false" Codebehind="Profile.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
 <%@ Register Src="Footer.ascx" TagName="PageFooter" TagPrefix="HnD" %>
 <%@ Register TagPrefix="HnD" TagName="PageList" Src="PageList.ascx"%>

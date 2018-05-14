@@ -1,4 +1,4 @@
-<%@ Control Language="c#" AutoEventWireup="false" CodeFile="SearchResultPageList.ascx.cs" Inherits="SD.HnD.GUI.SearchResultPageList" TargetSchema="http://schemas.microsoft.com/intellisense/ie5"%>
+<%@ Control Language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.SearchResultPageList" TargetSchema="http://schemas.microsoft.com/intellisense/ie5" Codebehind="SearchResultPageList.ascx.cs" %>
 <asp:repeater id="rptPageList" runat="server">
 	<headertemplate>Pages: </headertemplate>
 	<separatortemplate> </separatortemplate>

@@ -1,8 +1,8 @@
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="MessageEditor" Src="MessageEditor.ascx"%>
-<%@ Page language="c#" CodeFile="NewThread.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.NewThread" ValidateRequest="false"
-	Async="true"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.NewThread" ValidateRequest="false"
+	Async="true" Codebehind="NewThread.aspx.cs" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <html>
 <head runat="server">

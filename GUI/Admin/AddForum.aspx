@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="AddForum.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.AddForum" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Add a new forum"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.AddForum" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Add a new forum" Codebehind="AddForum.aspx.cs" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
 <table width="700" align="center" class="ExplanationBox" cellpadding="2" cellspacing="0">

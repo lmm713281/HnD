@@ -1,5 +1,5 @@
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
-<%@ Page language="c#" CodeFile="DeleteMessage.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.DeleteMessage" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.DeleteMessage" Codebehind="DeleteMessage.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <html>

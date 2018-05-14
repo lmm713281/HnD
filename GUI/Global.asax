@@ -34,7 +34,7 @@
 	/// <param name="e"></param>
 	protected void Application_Start( Object sender, EventArgs e )
 	{
-		SD.Tools.OrmProfiler.Interceptor.InterceptorCore.Initialize("HnD Dev");
+		//SD.Tools.OrmProfiler.Interceptor.InterceptorCore.Initialize("HnD Dev");
 
 		// Use static method in BL to fill the Application object with the data which is systemwide
 		// and thus cacheable in the application object.

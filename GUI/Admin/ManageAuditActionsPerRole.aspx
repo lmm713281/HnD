@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="ManageAuditActionsPerRole.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ManageAuditActionsPerRole" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Manage Audit Actions per role"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ManageAuditActionsPerRole" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Manage Audit Actions per role" Codebehind="ManageAuditActionsPerRole.aspx.cs" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
 <table width="700" align="center" class="ExplanationBox" cellpadding="2" cellspacing="0">

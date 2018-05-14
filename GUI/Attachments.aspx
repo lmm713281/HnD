@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Attachments.aspx.cs" Inherits="SD.HnD.GUI.Attachments" %>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="SD.HnD.GUI.Attachments" Codebehind="Attachments.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="MessageEditor" Src="MessageEditor.ascx"%>

@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="default.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI._default" EnableViewState="false" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI._default" EnableViewState="false" Codebehind="default.aspx.cs" %>
 <%@ Import namespace="System.Data" %>
 <%@ Import namespace="SD.HnD.DAL.EntityClasses" %>
 <%@ Import Namespace="SD.HnD.GUI" %>

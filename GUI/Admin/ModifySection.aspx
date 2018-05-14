@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="ModifySection.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ModifySection" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Modify a section"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ModifySection" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Modify a section" Codebehind="ModifySection.aspx.cs" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
 <table cellSpacing="0" cellPadding="2" width="700" align="center" class="ExplanationBox">

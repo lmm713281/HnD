@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="MyThreads.aspx.cs" AutoEventWireup="true" Inherits="SD.HnD.GUI.MyThreads" ValidateRequest="false" %>
+<%@ Page language="c#" AutoEventWireup="true" Inherits="SD.HnD.GUI.MyThreads" ValidateRequest="false" Codebehind="MyThreads.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
 <%@ Register Src="Footer.ascx" TagName="PageFooter" TagPrefix="HnD" %>
 <%@ Register TagPrefix="HnD" TagName="PageList" Src="PageList.ascx"%>

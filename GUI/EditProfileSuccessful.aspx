@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="EditProfileSuccessful.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.EditProfileSuccessful" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.EditProfileSuccessful" Codebehind="EditProfileSuccessful.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="HeaderRestrictedMenu.ascx"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >

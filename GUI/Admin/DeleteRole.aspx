@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="DeleteRole.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.DeleteRole" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Delete a role"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.DeleteRole" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Delete a role" Codebehind="DeleteRole.aspx.cs" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
 <table cellSpacing="0" cellPadding="2" width="700" align="center" class="ExplanationBox">

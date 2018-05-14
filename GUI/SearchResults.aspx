@@ -1,5 +1,5 @@
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
-<%@ Page language="c#" CodeFile="SearchResults.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.SearchResults" EnableViewState="false" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.SearchResults" EnableViewState="false" Codebehind="SearchResults.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Import namespace="System.Data" %>
 <%@ Register TagPrefix="HnD" TagName="SearchResultPageList" Src="SearchResultPageList.ascx"%>

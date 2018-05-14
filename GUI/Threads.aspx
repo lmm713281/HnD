@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="Threads.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Threads" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Threads" Codebehind="Threads.aspx.cs" %>
 <%@ Import namespace="System.Web" %>
 <%@ Import Namespace="System.Globalization" %>
 <%@ Import Namespace="SD.HnD.GUI" %>

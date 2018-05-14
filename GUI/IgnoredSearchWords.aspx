@@ -1,7 +1,7 @@
 <%@ Import namespace="System.Data" %>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
-<%@ Page language="c#" CodeFile="IgnoredSearchWords.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.IgnoredSearchWords" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.IgnoredSearchWords" Codebehind="IgnoredSearchWords.aspx.cs" %>
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en" >
 <html>
   <head runat="server">

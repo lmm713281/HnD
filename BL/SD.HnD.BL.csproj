@@ -98,8 +98,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses, Version=5.3.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
-      <HintPath>..\packages\SD.LLBLGen.Pro.ORMSupportClasses.5.3.4\lib\net452\SD.LLBLGen.Pro.ORMSupportClasses.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\SD.LLBLGen.Pro.ORMSupportClasses.5.3.5\lib\net452\SD.LLBLGen.Pro.ORMSupportClasses.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

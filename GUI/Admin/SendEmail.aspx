@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="SendEmail.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.SendEmail" 
-	MasterPageFile="~/Admin/AdminMaster.master" title="HnD::Administrate::Send email to user(s)" ValidateRequest="false"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.SendEmail" 
+	MasterPageFile="~/Admin/AdminMaster.master" title="HnD::Administrate::Send email to user(s)" ValidateRequest="false" Codebehind="SendEmail.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="FindUser" Src="FindUser.ascx"%>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">

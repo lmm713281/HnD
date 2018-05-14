@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="NewMessage.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.NewMessage" ValidateRequest="false"
-	Async="true"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.NewMessage" ValidateRequest="false"
+	Async="true" Codebehind="NewMessage.aspx.cs" %>
 <%@ Import namespace="SD.HnD.DAL.EntityClasses" %>
 <%@ Import namespace="System.Data" %>
 <%@ Import namespace="System.Web" %>

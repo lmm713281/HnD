@@ -1,5 +1,5 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ManageSupportQueues.aspx.cs" Inherits="SD.HnD.GUI.Admin.ManageSupportQueues" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Manage Support Queues"%>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="SD.HnD.GUI.Admin.ManageSupportQueues" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Manage Support Queues" Codebehind="ManageSupportQueues.aspx.cs" %>
 <%@ Register Assembly="SD.LLBLGen.Pro.ORMSupportClasses.Web" Namespace="SD.LLBLGen.Pro.ORMSupportClasses" TagPrefix="llblgenpro" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">

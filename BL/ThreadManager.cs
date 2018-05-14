@@ -270,7 +270,15 @@ namespace SD.HnD.BL
 		public static bool DeleteThread(int threadID)
 		{
 			using(var adapter = new DataAccessAdapter())
-			{ 
+			{
+				var thread = ThreadGuiHelper.GetThread(threadID);
+				if(thread == null)
+				{
+					return false;
+				}
+				// purge cached threads for the forum, as the thread will be removed from that
+				CacheController.PurgeResultsets("Threads_" + thread.ForumID);
+				
 				// we'll use the delete threads feature as deleting a thread requires updating more data than just deleting a single thread object. 
 				adapter.StartTransaction(IsolationLevel.ReadCommitted, "DeleteThread");
 				try
@@ -297,6 +305,9 @@ namespace SD.HnD.BL
 		internal static void DeleteAllThreadsInForum(int forumID, DataAccessAdapter adapter)
 		{
 			DeleteThreads(new PredicateExpression(ThreadFields.ForumID == forumID), adapter);
+
+			// purge cached threads for the forum, as the thread will be removed from that
+			CacheController.PurgeResultsets("Threads_" + forumID);
 		}
 
 
@@ -328,6 +339,7 @@ namespace SD.HnD.BL
 			adapter.DeleteEntitiesDirectly(typeof(ThreadEntity), new RelationPredicateBucket(threadFilter));
 
 			// don't commit the transaction, that's up to the caller.
+
 		}
 
 
@@ -445,6 +457,14 @@ namespace SD.HnD.BL
 																			bool sendReplyNotifications, bool closeThreadAfterInsert)
 		{
 			int messageID = 0;
+			var thread = ThreadGuiHelper.GetThread(threadID);
+			if(thread == null)
+			{
+				return 0;
+			}
+			// purge cached threads for the forum, as the thread will be removed from that
+			CacheController.PurgeResultsets("Threads_" + thread.ForumID);
+
 			using(var adapter = new DataAccessAdapter())
 			{
 				adapter.StartTransaction(IsolationLevel.ReadCommitted, "InsertNewMessage");
@@ -466,19 +486,13 @@ namespace SD.HnD.BL
 						MessageManager.UpdateStatisticsAfterMessageInsert(threadID, userID, adapter, postingDate, true, subscribeToThread);
 						if(closeThreadAfterInsert)
 						{
-							var thread = new ThreadEntity(threadID);
-							var result = adapter.FetchEntity(thread);
-							if(result)
+							thread.IsClosed = true;
+							thread.IsSticky = false;
+							thread.MarkedAsDone = true;
+							if(adapter.SaveEntity(thread))
 							{
-								thread.IsClosed = true;
-								thread.IsSticky = false;
-								thread.MarkedAsDone = true;
-								result = adapter.SaveEntity(thread);
-								if(result)
-								{
-									// save succeeded, so remove from queue, pass the current transaction to the method so the action takes place inside this transaction.
-									SupportQueueManager.RemoveThreadFromQueue(threadID, adapter);
-								}
+								// save succeeded, so remove from queue, pass the current transaction to the method so the action takes place inside this transaction.
+								SupportQueueManager.RemoveThreadFromQueue(threadID, adapter);
 							}
 						}
 					}
@@ -497,6 +511,6 @@ namespace SD.HnD.BL
 				ThreadManager.SendThreadReplyNotifications(threadID, userID, threadUpdatedNotificationTemplate, emailData);
 			}
 			return messageID;
-}
+		}
 	}
 }

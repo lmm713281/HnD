@@ -1,5 +1,5 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="DeleteUser.aspx.cs" Inherits="SD.HnD.GUI.Admin.DeleteUser" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Delete a user"%>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="SD.HnD.GUI.Admin.DeleteUser" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Delete a user" Codebehind="DeleteUser.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="FindUser" Src="FindUser.ascx"%>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">

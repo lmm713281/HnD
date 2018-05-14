@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="MoveThread.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.MoveThread" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.MoveThread" Codebehind="MoveThread.aspx.cs" %>
 
 <%@ Register Assembly="SD.LLBLGen.Pro.ORMSupportClasses.Web" Namespace="SD.LLBLGen.Pro.ORMSupportClasses" TagPrefix="llblgenpro" %>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>

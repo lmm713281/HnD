@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="AddSection.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.AddSection" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Add a new section"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.AddSection" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Add a new section" Codebehind="AddSection.aspx.cs" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
 <table width="700" align="center" border="0" cellpadding="0" cellspacing="0">

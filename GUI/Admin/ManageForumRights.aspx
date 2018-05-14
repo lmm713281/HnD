@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="ManageForumRights.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ManageForumRights" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Manage forum rights"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ManageForumRights" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Manage forum rights" Codebehind="ManageForumRights.aspx.cs" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
 <table width="700" align="center" class="ExplanationBox" cellpadding="2" cellspacing="0">

@@ -1,4 +1,4 @@
-<%@ Control Language="c#" AutoEventWireup="false" CodeFile="FindUser.ascx.cs" Inherits="SD.HnD.GUI.Admin.FindUser" TargetSchema="http://schemas.microsoft.com/intellisense/ie5"%>
+<%@ Control Language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.FindUser" TargetSchema="http://schemas.microsoft.com/intellisense/ie5" Codebehind="FindUser.ascx.cs" %>
 <table width="700" align="center" border="0" cellpadding="0" cellspacing="0">
 <tr>
 	<td class="FormHeaderTwoLine">

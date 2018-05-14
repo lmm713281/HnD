@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="SupportQueues.aspx.cs" Inherits="SD.HnD.GUI.SupportQueues" %>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="SD.HnD.GUI.SupportQueues" Codebehind="SupportQueues.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageList" Src="PageList.ascx"%>

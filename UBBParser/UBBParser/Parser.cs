@@ -1133,111 +1133,111 @@ namespace SD.HnD.UBBParser
 			// Untokenized string. Mandatory token.
 			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.UntokenizedLiteralString, "", RegexOptions.None));
 			// alt token (Alt)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.AltTerminal, @"alt", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.AltTerminal, @"alt", RegexOptions.IgnoreCase));
 			// '=' token (Assignment)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.Assignment, @"=", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.Assignment, @"=", RegexOptions.IgnoreCase));
 			// [b] token (BoldTextStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.BoldTextStartTag, @"\[b\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.BoldTextStartTag, @"\[b\]", RegexOptions.IgnoreCase));
 			// [/b] token (BoldTextEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.BoldTextEndTag, @"\[/b\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.BoldTextEndTag, @"\[/b\]", RegexOptions.IgnoreCase));
 			// [code token (CodeTextStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.CodeTextStartTag, @"\[code]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.CodeTextStartTag, @"\[code]", RegexOptions.IgnoreCase));
 			// [/code] token (CodeTextEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.CodeTextEndTag, @"\[/code\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.CodeTextEndTag, @"\[/code\]", RegexOptions.IgnoreCase));
 			// [color token (ColorStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ColoredTextStartTag, @"\[color", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ColoredTextStartTag, @"\[color", RegexOptions.IgnoreCase));
 			// [/color] token (ColorEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ColoredTextEndTag, @"\[/color]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ColoredTextEndTag, @"\[/color]", RegexOptions.IgnoreCase));
 			// \r token (CR)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.CR, @"\r", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.CR, @"\r", RegexOptions.IgnoreCase));
 			// description token (Description)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.DescriptionTerminal, @"description", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.DescriptionTerminal, @"description", RegexOptions.IgnoreCase));
 			// Emailaddress token (EmailAddress)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.EmailAddress, @"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.EmailAddress, @"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*", RegexOptions.IgnoreCase));
 			// [img token (ImageStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ImageStartTag, @"\[img", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ImageStartTag, @"\[img", RegexOptions.IgnoreCase));
 			// [/img] token (ImageEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ImageEndTag, @"\[/img\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ImageEndTag, @"\[/img\]", RegexOptions.IgnoreCase));
 			// ImageURL token (ImageURL). 
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ImageURL, @"(http://www.|http://)([\w-]+\.)+[\w-]+(/[\w-./?%&amp+,#;~=]*)?/[\w-]+\.(jpg|gif|png)", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ImageURL, @"(http://www.|http://)([\w-]+\.)+[\w-]+(/[\w-./?%&amp+,#;~=]*)?/[\w-]+\.(jpg|gif|png)", RegexOptions.IgnoreCase));
 			// [i] token (ItalicTextStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ItalicTextStartTag, @"\[i\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ItalicTextStartTag, @"\[i\]", RegexOptions.IgnoreCase));
 			// [/i] token (ItalicTextEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ItalicTextEndTag, @"\[/i\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ItalicTextEndTag, @"\[/i\]", RegexOptions.IgnoreCase));
 			// [*] token (ListItemStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ListItemStartTag, @"\[\*\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ListItemStartTag, @"\[\*\]", RegexOptions.IgnoreCase));
 			// [/*] token (ListItemEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ListItemEndTag, @"\[/\*\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ListItemEndTag, @"\[/\*\]", RegexOptions.IgnoreCase));
 			// [/list] token (ListEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ListEndTag, @"\[/list\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ListEndTag, @"\[/list\]", RegexOptions.IgnoreCase));
 			// [list token (ListStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ListStartTag, @"\[list", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ListStartTag, @"\[list", RegexOptions.IgnoreCase));
 			// \n token (LF)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.LF, @"\n", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.LF, @"\n", RegexOptions.IgnoreCase));
 			// 'nick' token (Nick)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.NickTerminal, @"nick", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.NickTerminal, @"nick", RegexOptions.IgnoreCase));
 			// [offtopic] token (OfftopicTextStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.OfftopicTextStartTag, @"\[offtopic\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.OfftopicTextStartTag, @"\[offtopic\]", RegexOptions.IgnoreCase));
 			// [/offtopic] token (OfftopicTextEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.OfftopicTextEndTag, @"\[/offtopic\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.OfftopicTextEndTag, @"\[/offtopic\]", RegexOptions.IgnoreCase));
 			// QuotedString token
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.QuotedString, "(\".*?\")", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.QuotedString, "(\".*?\")", RegexOptions.IgnoreCase));
 			// [quote token (QuoteTextStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.QuotedTextStartTag, @"\[quote", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.QuotedTextStartTag, @"\[quote", RegexOptions.IgnoreCase));
 			// [/quote] token (QuoteTextEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.QuotedTextEndTag, @"\[/quote\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.QuotedTextEndTag, @"\[/quote\]", RegexOptions.IgnoreCase));
 			// [size token (SizeStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SizedTextStartTag, @"\[size", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SizedTextStartTag, @"\[size", RegexOptions.IgnoreCase));
 			// [/size] token (SizeEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SizedTextEndTag, @"\[/size\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SizedTextEndTag, @"\[/size\]", RegexOptions.IgnoreCase));
 			// [s] token (StrikedTextStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.StrikedTextStartTag, @"\[s\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.StrikedTextStartTag, @"\[s\]", RegexOptions.IgnoreCase));
 			// [/s] token (StrikedTextEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.StrikedTextEndTag, @"\[/s\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.StrikedTextEndTag, @"\[/s\]", RegexOptions.IgnoreCase));
 			// [u] token (UnderlinedTextStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.UnderlinedTextStartTag, @"\[u\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.UnderlinedTextStartTag, @"\[u\]", RegexOptions.IgnoreCase));
 			// [/u] token (UnderlinedTextEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.UnderlinedTextEndTag, @"\[/u\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.UnderlinedTextEndTag, @"\[/u\]", RegexOptions.IgnoreCase));
 			// SingleQuotedString token
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SingleQuotedNumericString, @"('\d')", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SingleQuotedNumericString, @"('\d')", RegexOptions.IgnoreCase));
 			// ':D' token (SmileyLaugh)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyLaugh, @":D", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyLaugh, @":D", RegexOptions.IgnoreCase));
 			// ':(' token (SmileyAngry)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyAngry, @":\(", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyAngry, @":\(", RegexOptions.IgnoreCase));
 			// ':)' token (SmileyRegular)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyRegular, @":\)", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyRegular, @":\)", RegexOptions.IgnoreCase));
 			// ';)' token (SmileyWink)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyWink, @";\)", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyWink, @";\)", RegexOptions.IgnoreCase));
 			// '8)' token (SmileyCool)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyCool, @"8\)", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyCool, @"8\)", RegexOptions.IgnoreCase));
 			// ':P' token (SmileyTongue)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyTongue, @":P", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyTongue, @":P", RegexOptions.IgnoreCase));
 			// ':?' token (SmileyConfused)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyConfused, @":\?", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyConfused, @":\?", RegexOptions.IgnoreCase));
 			// ':o' token (SmileyShocked)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyShocked, @":o", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyShocked, @":o", RegexOptions.IgnoreCase));
 			// ':/' token (SmileyDissapointed)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyDissapointed, @":/", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyDissapointed, @":/", RegexOptions.IgnoreCase));
 			// ';(' token (SmileySad)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileySad, @";\(", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileySad, @";\(", RegexOptions.IgnoreCase));
 			// ':!' token (SmileyEmbarassed)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyEmbarrassed, @":\!", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.SmileyEmbarrassed, @":\!", RegexOptions.IgnoreCase));
 			// '    ' (4 * space) or TAB
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.Tab, @"[ ]{4}|\t", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.Tab, @"[ ]{4}|\t", RegexOptions.IgnoreCase));
 			// ']' token (TagCloseBracket)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.TagCloseBracket, @"\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.TagCloseBracket, @"\]", RegexOptions.IgnoreCase));
 			// type token (Type)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.TypeTerminal, @"type", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.TypeTerminal, @"type", RegexOptions.IgnoreCase));
 			// URI token (URI)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.URI, @"(http://www.|http://|https://www.|https://)([\w-]+\.)+[\w-]+(/[\w-./?%&amp;+,~=#]*)?", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.URI, @"(http://www.|http://|https://www.|https://)([\w-]+\.)+[\w-]+(/[\w-./?%&amp;+,~=#]*)?", RegexOptions.IgnoreCase));
 			// [url token (URLStartTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.URLStartTag, @"\[url", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.URLStartTag, @"\[url", RegexOptions.IgnoreCase));
 			// [/url] token (URLEndTag)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.URLEndTag, @"\[/url\]", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.URLEndTag, @"\[/url\]", RegexOptions.IgnoreCase));
 			// value token (Value)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ValueTerminal, @"value", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.ValueTerminal, @"value", RegexOptions.IgnoreCase));
 			// ' ' (space)
-			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.WhiteSpace, @"[ ]{1,3}", RegexOptions.Compiled | RegexOptions.IgnoreCase));
+			Parser.TokenDefinitions.Add(new UBBTokenDefinition((int)Token.WhiteSpace, @"[ ]{1,3}", RegexOptions.IgnoreCase));
 		}
 
 

@@ -1,6 +1,6 @@
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
-<%@ Page language="c#" CodeFile="DeleteThread.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.DeleteThread" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.DeleteThread" Codebehind="DeleteThread.aspx.cs" %>
 <!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <html>
   <head runat="server">

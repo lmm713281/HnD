@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="ViewAuditInfo.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ViewAuditInfo" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::View Audit Info for user"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.ViewAuditInfo" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::View Audit Info for user" Codebehind="ViewAuditInfo.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="FindUser" Src="FindUser.ascx"%>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">

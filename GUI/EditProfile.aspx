@@ -1,6 +1,6 @@
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
-<%@ Page language="c#" CodeFile="EditProfile.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.EditProfile" ValidateRequest="false" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.EditProfile" ValidateRequest="false" Codebehind="EditProfile.aspx.cs" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <html>
   <head runat="server">

@@ -1,4 +1,4 @@
-<%@ Control Language="c#" AutoEventWireup="false" CodeFile="PageList.ascx.cs" Inherits="SD.HnD.GUI.PageList" TargetSchema="http://schemas.microsoft.com/intellisense/ie5"%>
+<%@ Control Language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.PageList" TargetSchema="http://schemas.microsoft.com/intellisense/ie5" Codebehind="PageList.ascx.cs" %>
 <asp:repeater ID="rptPageListMessages" Runat="server" Visible="false">
 	<headertemplate>Pages: </headertemplate>
 	<separatortemplate> </separatortemplate>

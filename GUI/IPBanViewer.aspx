@@ -1,5 +1,5 @@
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
-<%@ Page language="c#" CodeFile="IPBanViewer.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.IPBanViewer" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.IPBanViewer" Codebehind="IPBanViewer.aspx.cs" %>
 <%@ Import namespace="System.Data" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <html>

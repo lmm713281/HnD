@@ -1,4 +1,4 @@
-<%@ Page language="c#" CodeFile="Bookmarks.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Bookmarks" %>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Bookmarks" Codebehind="Bookmarks.aspx.cs" %>
 <%@ Import namespace="System.Data" %>
 <%@ Import namespace="System.Web" %>
 <%@ Import Namespace="SD.HnD.GUI" %>

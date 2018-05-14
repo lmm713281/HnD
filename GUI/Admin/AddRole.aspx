@@ -1,5 +1,5 @@
-<%@ Page language="c#" CodeFile="AddRole.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.AddRole" 
-	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Add a new role"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Admin.AddRole" 
+	MasterPageFile="~/Admin/AdminMaster.master" Title="HnD::Administrate::Add a new role" Codebehind="AddRole.aspx.cs" %>
 
 <asp:Content ContentPlaceHolderID="phMainContent" runat="server">
 <table width="700" align="center" border="0" cellpadding="0" cellspacing="0">

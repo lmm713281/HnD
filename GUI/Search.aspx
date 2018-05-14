@@ -1,5 +1,5 @@
 <%@ Register TagPrefix="HnD" TagName="PageHeader" Src="Header.ascx"%>
-<%@ Page language="c#" CodeFile="Search.aspx.cs" AutoEventWireup="false" Inherits="SD.HnD.GUI.Search"  ValidateRequest="false"%>
+<%@ Page language="c#" AutoEventWireup="false" Inherits="SD.HnD.GUI.Search"  ValidateRequest="false" Codebehind="Search.aspx.cs" %>
 <%@ Register TagPrefix="HnD" TagName="PageFooter" Src="Footer.ascx"%>
 <%@ Import namespace="System.Data" %>
 <!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
