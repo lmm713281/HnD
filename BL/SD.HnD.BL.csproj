@@ -97,8 +97,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses, Version=5.3.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
-      <HintPath>..\packages\SD.LLBLGen.Pro.ORMSupportClasses.5.3.5\lib\net452\SD.LLBLGen.Pro.ORMSupportClasses.dll</HintPath>
+    <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses, Version=5.4.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+      <HintPath>..\packages\SD.LLBLGen.Pro.ORMSupportClasses.5.4.0\lib\net452\SD.LLBLGen.Pro.ORMSupportClasses.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -113,11 +113,11 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\DALAdapter\SD.HnD.DAL.csproj">
+    <ProjectReference Include="..\DALAdapter\DatabaseGeneric\SD.HnD.DAL.csproj">
       <Project>{d90c3ee7-d858-4bde-879e-02ebd825e441}</Project>
       <Name>SD.HnD.DAL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DALAdapter\SD.HnD.DALDBSpecific.csproj">
+    <ProjectReference Include="..\DALAdapter\DatabaseSpecific\SD.HnD.DALDBSpecific.csproj">
       <Project>{c2f065fb-3317-4d77-94a3-6bf445651c9d}</Project>
       <Name>SD.HnD.DALDBSpecific</Name>
     </ProjectReference>
@@ -206,6 +206,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
